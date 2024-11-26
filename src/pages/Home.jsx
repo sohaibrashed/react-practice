@@ -1,5 +1,13 @@
+import HeroSection from "@/components/HeroSection";
+import ProductCardGrid from "@/components/ProductCardGrid";
+
 function Home() {
-  return <p className="text-9xl text-green-500">Hello World</p>;
+  return (
+    <>
+      <HeroSection />
+      <ProductCardGrid />
+    </>
+  );
 }
 
 export default Home;

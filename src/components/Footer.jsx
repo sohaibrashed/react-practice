@@ -1,9 +1,93 @@
-function Footer() {
+import { Facebook, Instagram, Twitter } from "lucide-react";
+import { Link } from "react-router";
+
+export default function Footer() {
   return (
-    <footer>
-      <p className="text-xl text-pink-500">Footer</p>
+    <footer className="bg-gray-900 text-white py-8">
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Company Info */}
+          <div>
+            <h4 className="text-lg font-bold mb-4">Clothify</h4>
+            <p className="text-sm">
+              Your one-stop shop for the latest in fashion and trends. Quality
+              clothing at affordable prices.
+            </p>
+          </div>
+
+          {/* Navigation */}
+          <div>
+            <h4 className="text-lg font-bold mb-4">Quick Links</h4>
+            <ul className="space-y-2">
+              <li>
+                <Link to="/shop" className="hover:text-gray-400">
+                  Shop
+                </Link>
+              </li>
+              <li>
+                <Link to="/categories" className="hover:text-gray-400">
+                  Categories
+                </Link>
+              </li>
+              <li>
+                <Link to="/deals" className="hover:text-gray-400">
+                  Deals
+                </Link>
+              </li>
+              <li>
+                <Link to="/about" className="hover:text-gray-400">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="hover:text-gray-400">
+                  Contact Us
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact & Social Media */}
+          <div>
+            <h4 className="text-lg font-bold mb-4">Get in Touch</h4>
+            <p className="text-sm mb-4">Email: support@clothify.com</p>
+            <p className="text-sm mb-4">Phone: +1 (123) 456-7890</p>
+            <div className="flex space-x-4">
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-gray-400"
+              >
+                <Facebook size={20} />
+              </a>
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-gray-400"
+              >
+                <Twitter size={20} />
+              </a>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-gray-400"
+              >
+                <Instagram size={20} />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Bottom */}
+        <div className="mt-8 border-t border-gray-700 pt-4 text-center text-sm">
+          <p>
+            &copy; {new Date().getFullYear()} Clothify. All rights reserved.
+          </p>
+        </div>
+      </div>
     </footer>
   );
 }
-
-export default Footer;
