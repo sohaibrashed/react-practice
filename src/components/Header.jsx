@@ -1,10 +1,49 @@
+import { Link, useNavigate } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Menu, ShoppingCart, User, Search } from "lucide-react";
+import { Menu, ShoppingCart, User, Search, LogOutIcon } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Link } from "react-router";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useSignoutMutation } from "@/services/usersApi";
+import { useToast } from "@/hooks/use-toast";
+import { logout } from "@/services/authSlice";
 
 export default function Header() {
+  const { userInfo } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const [signout, { isLoading, isError }] = useSignoutMutation();
+
+  const handleSignout = async () => {
+    try {
+      if (isLoading) return;
+      await signout().unwrap();
+
+      dispatch(logout());
+      navigate("/account");
+    } catch (err) {
+      // console.log(err);
+
+      if (isError) {
+        toast({
+          variant: "destructive",
+          title: "An error occurred during sign out.",
+        });
+      }
+    }
+  };
   return (
     <header className="bg-white shadow-md">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
@@ -52,12 +91,42 @@ export default function Header() {
           <button title="Cart" className="hover:text-gray-700">
             <ShoppingCart size={20} />
           </button>
-
-          <button title="Profile" className="hover:text-gray-700">
-            <Link to={"/account"}>
-              <User size={20} />
-            </Link>
-          </button>
+          {userInfo?.token ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild disabled={isLoading}>
+                <button
+                  disabled={isLoading}
+                  title="Profile"
+                  className="hover:text-gray-700"
+                >
+                  <User size={20} />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-40">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem onClick={() => navigate("/profile")}>
+                    <User />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="text-red-600"
+                    onClick={handleSignout}
+                  >
+                    <LogOutIcon />
+                    <span>Sign Out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <button title="Profile" className="hover:text-gray-700">
+              <Link to={"/account"}>
+                <User size={20} />
+              </Link>
+            </button>
+          )}
 
           <Sheet>
             <SheetTrigger asChild>

@@ -1,13 +1,13 @@
-import { Card } from "@/components/ui/card"; // Assuming you have a Card component from ShadCN
-import { Button } from "@/components/ui/button"; // Assuming you have a Button component from ShadCN
-import { Heart, ShoppingCart } from "lucide-react"; // Using icons for like and cart buttons
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Heart, ShoppingCart } from "lucide-react";
 
 export default function ProductCard({ product }) {
   return (
     <Card className="border border-gray-200 rounded-lg shadow-md overflow-hidden bg-white">
       <div className="relative">
         <img
-          src={product.image}
+          src={product.images?.[0]}
           alt={product.name}
           className="w-full h-64 object-cover"
         />
