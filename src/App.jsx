@@ -13,6 +13,7 @@ import AdminLayout from "./layouts/AdminLayout";
 import Users from "./pages/admin/Users";
 import AdminProducts from "./pages/admin/Products";
 import Orders from "./pages/admin/Orders";
+import SingleUser from "./pages/admin/SingleUser";
 
 function App() {
   return (
@@ -39,6 +40,8 @@ function App() {
           <Route path="" element={<Admin />}>
             <Route path="dashboard" index element={<Dashboard />} />
             <Route path="users" element={<Users />} />
+            <Route path="users/:id" element={<SingleUser />} />
+
             <Route path="products" element={<AdminProducts />} />
             <Route path="orders" element={<Orders />} />
           </Route>

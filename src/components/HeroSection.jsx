@@ -5,7 +5,7 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel"; // Import ShadCN carousel components
+} from "@/components/ui/carousel";
 
 export default function HeroSection() {
   return (

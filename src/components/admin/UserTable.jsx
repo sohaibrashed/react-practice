@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Table,
   TableBody,
@@ -8,35 +7,109 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { Button } from "../ui/button";
+import { EllipsisVertical } from "lucide-react";
+import UserFormDialog from "./UserFormDialog";
+import { Dialog, DialogTrigger } from "../ui/dialog";
+import { useNavigate } from "react-router";
 
-export default function UserTable({ users }) {
+export default function UserTable({
+  users,
+  onUpdateUser,
+  handleDeleteUser,
+  isLoading = false,
+}) {
+  const navigate = useNavigate();
+  const handleFormSubmit = (updatedData, id) => {
+    if (onUpdateUser) {
+      onUpdateUser(updatedData, id);
+    }
+  };
+
   return (
     <div className="p-4 bg-white rounded-lg shadow-md">
       <Table>
         <TableCaption className="text-gray-500">
-          A list of registered users in the system.
+          A list of registered users.
         </TableCaption>
         <TableHeader>
-          <TableRow>
+          <TableRow className={"bg-slate-100 rounded-lg"}>
             <TableHead className="text-left">Name</TableHead>
             <TableHead className="text-left">Email</TableHead>
             <TableHead className="text-left">Role</TableHead>
             <TableHead className="text-left">Created At</TableHead>
+            <TableHead></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {users.map((user) => (
             <TableRow key={user._id} className="hover:bg-gray-100">
-              <TableCell>{user.name}</TableCell>
-              <TableCell>{user.email}</TableCell>
+              <TableCell className="py-2 px-4 border-b">{user.name}</TableCell>
+              <TableCell className="py-2 px-4 border-b">{user.email}</TableCell>
               <TableCell
-                className={`capitalize ${
-                  user.role === "admin" && "text-blue-600"
-                } ${user.role === "owner" && "text-green-600"}`}
+                className={`py-2 px-4 border-b capitalize ${
+                  user.role === "admin" ? "text-blue-600" : ""
+                } ${user.role === "owner" ? "text-green-600" : ""}`}
               >
                 {user.role}
               </TableCell>
-              <TableCell>{user.createdAt.split("T")[0]}</TableCell>
+              <TableCell className="py-2 px-4 border-b">
+                {user.createdAt.split("T")[0]}
+              </TableCell>
+              <TableCell className="py-2 px-4 border-b">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      disabled={isLoading}
+                      variant="outline"
+                      className="text-sm"
+                    >
+                      <EllipsisVertical />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-32">
+                    <DropdownMenuItem
+                      onClick={() => navigate(`/admin/users/${user._id}`)}
+                    >
+                      <Button variant="ghost" className="font-normal w-full">
+                        View
+                      </Button>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            className="font-normal w-full"
+                          >
+                            Update
+                          </Button>
+                        </DialogTrigger>
+                        <UserFormDialog
+                          isEdit
+                          user={user}
+                          onSubmit={handleFormSubmit}
+                          isLoading={isLoading}
+                        />
+                      </Dialog>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="text-red-600"
+                      onClick={() => handleDeleteUser(user._id)}
+                    >
+                      <Button variant="ghost" className="font-normal w-full">
+                        Delete
+                      </Button>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

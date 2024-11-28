@@ -1,6 +1,126 @@
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
+import { useGetProductQuery } from "@/services/productsApi";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import LoadingSpinner from "@/components/ui/loadingSpinner";
+// import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export default function Product() {
   const { id } = useParams();
-  return <div>Product id: {id}</div>;
+  const navigate = useNavigate();
+  const { data, isLoading, isError } = useGetProductQuery(id);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <LoadingSpinner size={40} />
+      </div>
+    );
+  }
+
+  const { product } = data;
+
+  if (isError) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-red-500">
+          Failed to load product data. Please try again later.
+        </p>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-gray-500">Product not found.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100 py-8 px-4">
+      <div className="container mx-auto">
+        <Button variant="outline" onClick={() => navigate(-1)} className="mb-6">
+          &larr; Back
+        </Button>
+
+        <Card className="flex flex-col lg:flex-row gap-8 bg-white shadow-lg rounded-lg p-6">
+          <div className="lg:w-1/2">
+            <Carousel>
+              <CarouselContent>
+                {product.images.map((image, index) => (
+                  <CarouselItem key={index}>
+                    <img
+                      key={index}
+                      src={image}
+                      alt={`Product Image ${index + 1}`}
+                      className="rounded-lg w-full object-cover"
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+          </div>
+
+          <div className="lg:w-1/2 space-y-4 p-10">
+            <h1 className="text-3xl font-bold text-gray-800">{product.name}</h1>
+            <p className="text-gray-600">{product.description}</p>
+
+            <div className="flex items-center gap-4">
+              <Badge>{product.category}</Badge>
+              <Badge variant="secondary">{product.subCategory}</Badge>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <span className="text-xl font-semibold text-gray-800">
+                Price:
+              </span>
+              <span className="text-2xl font-bold text-green-600">
+                ${product.price.toFixed(2)}
+              </span>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-gray-600">
+                <span className="font-medium">Size:</span> {product.size}
+              </p>
+              <p className="text-gray-600">
+                <span className="font-medium">Color:</span> {product.color}
+              </p>
+              <p className="text-gray-600">
+                <span className="font-medium">Material:</span>{" "}
+                {product.material}
+              </p>
+              <p className="text-gray-600">
+                <span className="font-medium">Stock:</span> {product.stock}
+              </p>
+              <p className="text-gray-600">
+                <span className="font-medium">Brand:</span> {product.brand}
+              </p>
+            </div>
+
+            <div className="flex gap-4 items-center">
+              <span className="text-gray-600">Tags:</span>
+              <div className="flex gap-2 flex-wrap">
+                {product.tags.map((tag, index) => (
+                  <Badge key={index}>{tag}</Badge>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
 }
