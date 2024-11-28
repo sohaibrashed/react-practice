@@ -2,9 +2,12 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart, ShoppingCart } from "lucide-react";
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, onClick }) {
   return (
-    <Card className="border border-gray-200 rounded-lg shadow-md overflow-hidden bg-white">
+    <Card
+      onClick={() => onClick(product._id)}
+      className="border border-gray-200 rounded-lg shadow-md overflow-hidden bg-white cursor-pointer"
+    >
       <div className="relative">
         <img
           src={product.images?.[0]}

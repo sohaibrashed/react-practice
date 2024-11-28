@@ -3,7 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Menu, ShoppingCart, User, Search, LogOutIcon } from "lucide-react";
+import {
+  Menu,
+  ShoppingCart,
+  User,
+  Search,
+  LogOutIcon,
+  ShieldAlert,
+} from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   DropdownMenu,
@@ -102,6 +109,15 @@ export default function Header() {
                     <User />
                     <span>Profile</span>
                   </DropdownMenuItem>
+                  {["admin", "owner"].includes(userInfo.role) && (
+                    <DropdownMenuItem
+                      className="text-green-500"
+                      onClick={() => navigate("/admin/dashboard")}
+                    >
+                      <ShieldAlert />
+                      <span>Admin Portal</span>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem
                     className="text-red-600"
                     onClick={handleSignout}

@@ -12,8 +12,8 @@ export default function SignInForm() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("salman@gmail.com");
+  const [password, setPassword] = useState("123456");
 
   const [signin, { isLoading, isError }] = useSigninMutation();
 
@@ -33,9 +33,9 @@ export default function SignInForm() {
       const res = await signin({ email, password }).unwrap();
       const {
         token,
-        data: { name, email: userEmail },
+        data: { name, email: userEmail, role },
       } = res;
-      dispatch(setCredentials({ token, name, userEmail }));
+      dispatch(setCredentials({ token, name, userEmail, role }));
       navigate("/");
     } catch (err) {
       // console.log(err);

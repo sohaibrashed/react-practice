@@ -2,9 +2,11 @@ import SignInForm from "@/components/SignInForm";
 import SignUpForm from "@/components/SignUpForm";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useSelector } from "react-redux";
+import { Navigate, useParams } from "react-router";
 
 export default function Account() {
+  const { userInfo } = useSelector((state) => state.auth);
   const { type } = useParams();
   const [accountType, setAccountType] = useState(type || "signin");
 
@@ -15,6 +17,10 @@ export default function Account() {
       setAccountType(type);
     }
   }, [type]);
+
+  if (userInfo) {
+    return <Navigate to={"/"} replace />;
+  }
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
       <div className="bg-white shadow-lg rounded-lg w-full max-w-md p-6">

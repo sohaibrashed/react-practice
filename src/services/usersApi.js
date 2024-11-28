@@ -23,9 +23,21 @@ export const usersApi = apiSlice.injectEndpoints({
         method: "POST",
       }),
     }),
+    getUsers: builder.query({
+      query: () => ({
+        url: USERS_URL + "/",
+        // params: { keyword, pageNumber },
+      }),
+      keepUnusedDataFor: 5,
+      providesTags: ["User"],
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useSignupMutation, useSigninMutation, useSignoutMutation } =
-  usersApi;
+export const {
+  useSignupMutation,
+  useSigninMutation,
+  useSignoutMutation,
+  useGetUsersQuery,
+} = usersApi;

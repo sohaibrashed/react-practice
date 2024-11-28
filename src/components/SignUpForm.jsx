@@ -43,9 +43,9 @@ export default function SignUpForm() {
       const res = await signup({ name, email, password }).unwrap();
       const {
         token,
-        data: { name, email: userEmail },
+        data: { name, email: userEmail, role },
       } = res;
-      dispatch(setCredentials({ token, name, userEmail }));
+      dispatch(setCredentials({ token, name, userEmail, role }));
       navigate("/");
     } catch (err) {
       // console.log(err);
