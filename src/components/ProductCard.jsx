@@ -18,25 +18,28 @@ export default function ProductCard({ product }) {
           >
             <Heart size={20} />
           </Button>
-          <Button
+          {/* <Button
             variant="outline"
             className="bg-white text-gray-600 hover:text-gray-900"
           >
             <ShoppingCart size={20} />
-          </Button>
+          </Button> */}
         </div>
       </div>
       <div className="p-4">
         <h3 className="text-lg font-semibold text-gray-900 truncate">
           {product.name}
         </h3>
-        <p className="text-sm text-gray-500">{product.description}</p>
+        <p className="text-sm text-gray-500 h-10 line-clamp-2">
+          {product.description}
+        </p>
+
         <div className="mt-2 flex items-center justify-between">
           <span className="text-xl font-semibold text-gray-900">
             ${product.price}
           </span>
-          <Button className="bg-blue-600 text-white hover:bg-blue-700">
-            Add to Cart
+          <Button className="bg-slate-950 text-white hover:bg-slate-900">
+            <ShoppingCart size={20} />
           </Button>
         </div>
       </div>

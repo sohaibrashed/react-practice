@@ -11,8 +11,13 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<MainLayout />}>
-          <Route path="/" index element={<Home />} />
+          <Route
+            path="/category?/:category?/:subcategory?/search?/:keyword?/page?/:pageNumber?"
+            index
+            element={<Home />}
+          />
           <Route path="/account/:type?" element={<Account />} />
+
           <Route path="" element={<Private />}>
             <Route path="/profile" element={<Profile />} />
           </Route>

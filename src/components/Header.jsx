@@ -14,9 +14,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 import { useSignoutMutation } from "@/services/usersApi";
 import { useToast } from "@/hooks/use-toast";
 import { logout } from "@/services/authSlice";
+import Navbar from "./NavBar";
 
 export default function Header() {
   const { userInfo } = useSelector((state) => state.auth);
@@ -51,17 +53,7 @@ export default function Header() {
           <Link to="/">Clothify</Link>
         </div>
 
-        <nav className="hidden md:flex space-x-6">
-          <Link to="/shop" className="hover:text-gray-700">
-            Shop
-          </Link>
-          <Link to="/categories" className="hover:text-gray-700">
-            Categories
-          </Link>
-          <Link to="/deals" className="hover:text-gray-700">
-            Deals
-          </Link>
-        </nav>
+        <Navbar />
 
         <div className="hidden lg:flex items-center space-x-2">
           <Input type="text" placeholder="Search..." className="w-72" />
