@@ -14,7 +14,6 @@ import Logo from "../Logo";
 import {
   ChartNoAxesCombined,
   CircleGauge,
-  ListOrdered,
   Package,
   Settings,
   ShoppingBasket,

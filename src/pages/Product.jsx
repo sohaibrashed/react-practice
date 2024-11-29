@@ -13,7 +13,6 @@ import {
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import Rating from "react-rating";
 import { Star } from "lucide-react";
-// import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export default function Product() {
   const { id } = useParams();
@@ -55,7 +54,7 @@ export default function Product() {
           &larr; Back
         </Button>
 
-        <Card className="flex flex-col lg:flex-row gap-8 bg-white shadow-lg rounded-lg p-6">
+        <Card className="flex flex-col lg:flex-row gap-6 bg-white shadow-lg rounded-lg p-6">
           <div className="lg:w-1/2">
             <Carousel>
               <CarouselContent>
@@ -65,19 +64,19 @@ export default function Product() {
                       key={index}
                       src={image}
                       alt={`Product Image ${index + 1}`}
-                      className="rounded-lg w-full object-cover"
+                      className="rounded-lg w-full h-[34rem] object-cover"
                     />
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
+              <CarouselPrevious className={"bg-slate-600 text-white"} />
+              <CarouselNext className={"bg-slate-600 text-white"} />
             </Carousel>
           </div>
 
           <div className="lg:w-1/2 space-y-4 p-10">
             <h1 className="text-3xl font-bold text-gray-800">{product.name}</h1>
-            <p className="text-gray-600">{product.description}</p>
+            <p className="text-gray-600 line-clamp-2">{product.description}</p>
 
             <div className="flex items-center gap-4">
               <Badge>{product.category}</Badge>
@@ -89,7 +88,7 @@ export default function Product() {
                 Price:
               </span>
               <span className="text-2xl font-bold text-green-600">
-                ${product.price.toFixed(2)}
+                $ {product.price.toFixed(2)}
               </span>
             </div>
 
@@ -113,6 +112,7 @@ export default function Product() {
               <div className="text-gray-600 flex items-center">
                 <span className="font-medium">Rating:</span>
                 <Rating
+                  className="pt-1 pl-1"
                   emptySymbol={
                     <Star strokeWidth={0.5} size={16} fill="#fefbfb" />
                   }
@@ -123,6 +123,7 @@ export default function Product() {
                   initialRating={product.ratings}
                   readonly={true}
                 />
+                <span className="text-xs pl-2">{product.ratings}</span>
               </div>
             </div>
 

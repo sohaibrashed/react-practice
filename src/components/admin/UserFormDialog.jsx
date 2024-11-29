@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
-  Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -53,7 +51,7 @@ export default function UserFormDialog({
             : "Fill in the details to create a new user."}
         </DialogDescription>
       </DialogHeader>
-      <div className="space-y-4">
+      <div className="space-y-4 max-h-[70vh] overflow-y-auto px-2">
         <div>
           <Label htmlFor="fullName">Full Name</Label>
           <Input

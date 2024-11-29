@@ -43,6 +43,8 @@ function App() {
             <Route path="users/:id" element={<SingleUser />} />
 
             <Route path="products" element={<AdminProducts />} />
+            <Route path="products/:id" element={<Product />} />
+
             <Route path="orders" element={<Orders />} />
           </Route>
         </Route>

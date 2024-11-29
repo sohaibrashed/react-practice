@@ -2,10 +2,12 @@ import { Outlet } from "react-router";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import AppSidebar from "@/components/admin/AppSidebar";
+import DevelopmentBanner from "@/components/DevelopmentBanner";
 
 export default function AdminLayout() {
   return (
     <>
+      <DevelopmentBanner />
       <SidebarProvider
         style={{
           "--sidebar-background": "240 5.9% 10%",

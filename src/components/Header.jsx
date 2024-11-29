@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Button } from "@/components/ui/button";
@@ -65,7 +65,6 @@ export default function Header() {
         <div className="hidden lg:flex items-center space-x-2">
           <Input type="text" placeholder="Search..." className="w-72" />
           <Button>
-            {" "}
             <Search size={20} />
           </Button>
         </div>
@@ -144,15 +143,29 @@ export default function Header() {
             </SheetTrigger>
             <SheetContent side="left">
               <div className="flex flex-col space-y-4 p-4">
-                <Link to="/shop" className="hover:text-gray-700">
-                  Shop
-                </Link>
+                <NavLink
+                  to="/"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "hover:text-gray-700 border-b-2 border-slate-300"
+                      : "hover:text-gray-700"
+                  }
+                >
+                  Home
+                </NavLink>
                 <Link to="/categories" className="hover:text-gray-700">
                   Categories
                 </Link>
-                <Link to="/deals" className="hover:text-gray-700">
-                  Deals
-                </Link>
+                <NavLink
+                  to="/contact"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "hover:text-gray-700 border-b-2 border-slate-300"
+                      : "hover:text-gray-700"
+                  }
+                >
+                  Contact us
+                </NavLink>
               </div>
             </SheetContent>
           </Sheet>

@@ -19,7 +19,6 @@ export default function Navbar() {
   return (
     <NavigationMenu>
       <NavigationMenuList className="hidden md:flex space-x-6">
-        {/* Home Link */}
         <NavigationMenuItem>
           <NavigationMenuLink>
             <NavLink
@@ -35,7 +34,6 @@ export default function Navbar() {
           </NavigationMenuLink>
         </NavigationMenuItem>
 
-        {/* Categories Dropdown */}
         <NavigationMenuItem>
           <NavigationMenuTrigger className="hover:text-gray-700">
             Categories
@@ -66,7 +64,6 @@ export default function Navbar() {
           </NavigationMenuContent>
         </NavigationMenuItem>
 
-        {/* Contact Us Link */}
         <NavigationMenuItem>
           <NavigationMenuLink>
             <NavLink

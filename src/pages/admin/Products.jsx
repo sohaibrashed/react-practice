@@ -3,12 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { useToast } from "@/hooks/use-toast";
-import {
-  useCreateUserMutation,
-  useDeleteUserMutation,
-  useGetUsersQuery,
-  useUpdateUserMutation,
-} from "@/services/usersApi";
 import { CirclePlus, Search } from "lucide-react";
 import ProdcutFormDialog from "@/components/admin/ProductFormDialog";
 import ProductTable from "@/components/admin/ProductTable";
@@ -29,6 +23,7 @@ export default function AdminProducts() {
       isLoading: createLoading,
       isError: createError,
       isSuccess: createSuccess,
+      error,
     },
   ] = useCreateProductMutation();
 
@@ -66,14 +61,14 @@ export default function AdminProducts() {
       if (deleteError) throw Error;
       if (deleteSuccess) {
         toast({
-          title: "User deleted successfully.",
+          title: "Product deleted successfully.",
         });
       }
     } catch (error) {
       // console.log(error);
       toast({
         variant: "destructive",
-        title: "An error occurred during deleting user.",
+        title: "An error occurred during deleting product.",
       });
     }
   };
@@ -86,7 +81,7 @@ export default function AdminProducts() {
       if (updateError) throw Error;
       if (updateSuccess) {
         toast({
-          title: "User updated successfully.",
+          title: "Product updated successfully.",
         });
         setDialogOpen(false);
       }
@@ -94,7 +89,7 @@ export default function AdminProducts() {
       // console.log(error);
       toast({
         variant: "destructive",
-        title: "An error occurred during updating user.",
+        title: "An error occurred during updating product.",
       });
     }
   };
@@ -107,7 +102,7 @@ export default function AdminProducts() {
       if (createError) throw Error;
       if (createSuccess) {
         toast({
-          title: "User created successfully.",
+          title: "Product created successfully.",
         });
         setDialogOpen(false);
       }
@@ -115,7 +110,7 @@ export default function AdminProducts() {
       // console.log(error);
       toast({
         variant: "destructive",
-        title: "An error occurred during creating user.",
+        title: "An error occurred during creating product.",
       });
     }
   };
@@ -126,10 +121,27 @@ export default function AdminProducts() {
     }
   };
 
+  if (createError) {
+    console.log(error);
+  }
+
   return (
     <div className="min-h-screen">
+      <h1 className="text-4xl font-bold mb-8">Product Management</h1>
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-4xl font-bold mb-4">Product Management</h1>
+        <div className="relative w-full max-w-md">
+          <input
+            type="text"
+            // value={searchQuery}
+            // onChange={handleSearchChange}
+            placeholder="Search products..."
+            className="w-full py-2 px-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <Search
+            className="absolute right-3 top-2.5 text-gray-400"
+            size={20}
+          />
+        </div>
         <Dialog open={isDialogOpen} onOpenChange={handleDialogChange}>
           <DialogTrigger asChild>
             <Button
@@ -147,28 +159,14 @@ export default function AdminProducts() {
           />
         </Dialog>
       </div>
-      <div className="flex justify-between items-center mb-4">
-        <div className="relative w-full max-w-md">
-          <input
-            type="text"
-            // value={searchQuery}
-            // onChange={handleSearchChange}
-            placeholder="Search products..."
-            className="w-full py-2 px-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-          <Search
-            className="absolute right-3 top-2.5 text-gray-400"
-            size={20}
-          />
-        </div>
-      </div>
+      {isError && "Something went wrong"}
+
       <ProductTable
         products={data?.products}
         onUpdateProduct={handleProductUpdate}
         handleDeleteProduct={handleProductDelete}
         isLoading={updateLoading || deleteLoading || false}
       />
-      {isError && "Something went wrong"}
     </div>
   );
 }

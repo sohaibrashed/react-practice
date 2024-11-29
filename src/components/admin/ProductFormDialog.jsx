@@ -32,11 +32,14 @@ export default function ProductFormDialog({
   const [color, setColor] = useState(product.color || "");
   const [material, setMaterial] = useState(product.material || "");
   const [stock, setStock] = useState(product.stock || "");
+  const [tags, setTags] = useState(product.tags?.join(", ") || "");
+  const [brand, setBrand] = useState(product.brand || "");
+  const [images, setImages] = useState(product.images?.join("\n") || "");
 
   const handleSubmit = () => {
     if (isLoading) return;
 
-    if (!name || !price || !category || !stock) return; // Basic required fields
+    if (!name || !price || !category || !stock) return;
 
     const data = {
       name,
@@ -48,6 +51,9 @@ export default function ProductFormDialog({
       color,
       material,
       stock: parseInt(stock, 10),
+      tags: tags.split(",").map((tag) => tag.trim()),
+      brand,
+      images: images.split("\n").map((url) => url.trim()),
     };
 
     if (isEdit) {
@@ -69,7 +75,7 @@ export default function ProductFormDialog({
             : "Fill in the details to create a new product."}
         </DialogDescription>
       </DialogHeader>
-      <div className="space-y-4">
+      <div className="space-y-4 max-h-[70vh] overflow-y-auto px-2">
         <div>
           <Label htmlFor="name">Name</Label>
           <Input
@@ -126,6 +132,7 @@ export default function ProductFormDialog({
               <SelectItem value="Clothing">Clothing</SelectItem>
               <SelectItem value="Accessories">Accessories</SelectItem>
               <SelectItem value="Footwear">Footwear</SelectItem>
+              <SelectItem value="Bags">Bags</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -194,6 +201,46 @@ export default function ProductFormDialog({
             onChange={(e) => setStock(e.target.value)}
             disabled={isLoading}
           />
+        </div>
+
+        <div>
+          <Label htmlFor="tags">Tags</Label>
+          <Input
+            id="tags"
+            name="tags"
+            type="text"
+            placeholder="Enter tags (comma-separated)"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            disabled={isLoading}
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="brand">Brand</Label>
+          <Input
+            id="brand"
+            name="brand"
+            type="text"
+            placeholder="Enter brand"
+            value={brand}
+            onChange={(e) => setBrand(e.target.value)}
+            disabled={isLoading}
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="images">Images</Label>
+          <textarea
+            id="images"
+            name="images"
+            rows="3"
+            className="block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-opacity-50"
+            placeholder="Enter image URLs (one per line)"
+            value={images}
+            onChange={(e) => setImages(e.target.value)}
+            disabled={isLoading}
+          ></textarea>
         </div>
 
         <div className="mt-4">

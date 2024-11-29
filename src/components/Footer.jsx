@@ -6,7 +6,6 @@ export default function Footer() {
     <footer className="bg-gray-900 text-white py-8">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Company Info */}
           <div>
             <h4 className="text-lg font-bold mb-4">Clothify</h4>
             <p className="text-sm">
@@ -15,7 +14,6 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Navigation */}
           <div>
             <h4 className="text-lg font-bold mb-4">Quick Links</h4>
             <ul className="space-y-2">
@@ -47,7 +45,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact & Social Media */}
           <div>
             <h4 className="text-lg font-bold mb-4">Get in Touch</h4>
             <p className="text-sm mb-4">Email: support@clothify.com</p>
@@ -81,7 +78,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Footer Bottom */}
         <div className="mt-8 border-t border-gray-700 pt-4 text-center text-sm">
           <p>
             &copy; {new Date().getFullYear()} Clothify. All rights reserved.

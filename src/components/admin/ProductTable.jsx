@@ -15,7 +15,6 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { EllipsisVertical } from "lucide-react";
-import UserFormDialog from "./UserFormDialog";
 import { Dialog, DialogTrigger } from "../ui/dialog";
 import { useNavigate } from "react-router";
 import ProdcutFormDialog from "./ProductFormDialog";
@@ -110,7 +109,7 @@ export default function ProductTable({
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-32">
                     <DropdownMenuItem
-                      onClick={() => navigate(`/admin/users/${product._id}`)}
+                      onClick={() => navigate(`/admin/products/${product._id}`)}
                     >
                       <Button variant="ghost" className="font-normal w-full">
                         View
