@@ -48,7 +48,7 @@ export function AppSidebar() {
             <CircleGauge size={20} />
             Dashboard
           </NavLink>
-          <NavLink
+          {/* <NavLink
             to="/admin/analytics"
             className={({ isActive }) =>
               `flex justify-start items-center gap-2 py-2 px-3 rounded-lg ${
@@ -69,7 +69,7 @@ export function AppSidebar() {
           >
             <Settings />
             Settings
-          </NavLink>
+          </NavLink> */}
 
           <Collapsible defaultOpen className="group/collapsible">
             <SidebarMenuItem>
