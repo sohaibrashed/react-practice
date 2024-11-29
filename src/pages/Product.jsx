@@ -11,6 +11,8 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
+import Rating from "react-rating";
+import { Star } from "lucide-react";
 // import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export default function Product() {
@@ -108,6 +110,20 @@ export default function Product() {
               <p className="text-gray-600">
                 <span className="font-medium">Brand:</span> {product.brand}
               </p>
+              <div className="text-gray-600 flex items-center">
+                <span className="font-medium">Rating:</span>
+                <Rating
+                  emptySymbol={
+                    <Star strokeWidth={0.5} size={16} fill="#fefbfb" />
+                  }
+                  fullSymbol={
+                    <Star strokeWidth={0.5} size={16} fill="yellow" />
+                  }
+                  fractions={2}
+                  initialRating={product.ratings}
+                  readonly={true}
+                />
+              </div>
             </div>
 
             <div className="flex gap-4 items-center">
