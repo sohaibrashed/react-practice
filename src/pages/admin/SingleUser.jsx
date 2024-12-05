@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router";
 import { useGetUserQuery } from "@/services/usersApi";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
+import { UserCheck, UserCheck2 } from "lucide-react";
 
 export default function SingleUser() {
   const { id } = useParams();
@@ -46,7 +47,10 @@ export default function SingleUser() {
             &larr; Back
           </button>
         </div>
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">User Details</h1>
+        <div className="flex items-center gap-3 mb-4">
+          <UserCheck2 />
+          <h1 className="text-2xl font-bold text-gray-800">User Details</h1>
+        </div>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-gray-600 font-medium">User ID:</span>

@@ -14,13 +14,24 @@ import Users from "./pages/admin/Users";
 import AdminProducts from "./pages/admin/Products";
 import Orders from "./pages/admin/Orders";
 import SingleUser from "./pages/admin/SingleUser";
+import ScrollToTop from "./components/ScrollToTop";
+import PageTransition from "./components/PageTransition";
 
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<MainLayout />}>
-          <Route path="/" index element={<Home />} />
+          <Route
+            path="/"
+            index
+            element={
+              <PageTransition>
+                <Home />
+              </PageTransition>
+            }
+          />
           <Route
             path="/products/category/:type/:subCategory?"
             element={<Products />}
@@ -28,8 +39,22 @@ function App() {
           <Route path="/products/search/:keyword" element={<Products />} />
 
           {/* category?/:category?/:subcategory?/search?/:keyword?/page?/:pageNumber? */}
-          <Route path="/account/:type?" element={<Account />} />
-          <Route path="/product/:id" element={<Product />} />
+          <Route
+            path="/account/:type?"
+            element={
+              <PageTransition>
+                <Account />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/product/:id"
+            element={
+              <PageTransition>
+                <Product />
+              </PageTransition>
+            }
+          />
 
           <Route path="" element={<Private />}>
             <Route path="/profile" element={<Profile />} />
@@ -39,10 +64,24 @@ function App() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route path="" element={<Admin />}>
             <Route path="dashboard" index element={<Dashboard />} />
-            <Route path="users" element={<Users />} />
+            <Route
+              path="users"
+              element={
+                <PageTransition>
+                  <Users />
+                </PageTransition>
+              }
+            />
             <Route path="users/:id" element={<SingleUser />} />
 
-            <Route path="products" element={<AdminProducts />} />
+            <Route
+              path="products"
+              element={
+                <PageTransition>
+                  <AdminProducts />
+                </PageTransition>
+              }
+            />
             <Route path="products/:id" element={<Product />} />
 
             <Route path="orders" element={<Orders />} />
