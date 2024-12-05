@@ -23,7 +23,7 @@ export default function HeroSection() {
           <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
             <Button
               size="lg"
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-pink-600 hover:bg-pink-700 text-white"
             >
               Shop Now
             </Button>

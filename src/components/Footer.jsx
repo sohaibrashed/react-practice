@@ -3,11 +3,11 @@ import { Link } from "react-router";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-white py-8">
+    <footer className="bg-gradient-to-b from-pink-50 to-pink-300 text-slate-500 py-8">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h4 className="text-lg font-bold mb-4">Clothify</h4>
+            <h4 className="text-2xl font-bold mb-4 text-pink-600">Clothify</h4>
             <p className="text-sm">
               Your one-stop shop for the latest in fashion and trends. Quality
               clothing at affordable prices.
@@ -59,7 +59,7 @@ export default function Footer() {
                 <Facebook size={20} />
               </a>
               <a
-                href="https://twitter.com"
+                href="https://x.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-gray-400"

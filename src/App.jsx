@@ -16,6 +16,8 @@ import Orders from "./pages/admin/Orders";
 import SingleUser from "./pages/admin/SingleUser";
 import ScrollToTop from "./components/ScrollToTop";
 import PageTransition from "./components/PageTransition";
+import ContactUs from "./pages/ContactUs";
+import AboutUs from "./pages/AboutUs";
 
 function App() {
   return (
@@ -29,6 +31,24 @@ function App() {
             element={
               <PageTransition>
                 <Home />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/contact"
+            index
+            element={
+              <PageTransition>
+                <ContactUs />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/about"
+            index
+            element={
+              <PageTransition>
+                <AboutUs />
               </PageTransition>
             }
           />

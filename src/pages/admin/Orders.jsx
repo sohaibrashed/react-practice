@@ -12,38 +12,43 @@ import {
   useUpdateUserMutation,
 } from "@/services/usersApi";
 import { CirclePlus, Search } from "lucide-react";
-import { useGetOrdersQuery } from "@/services/ordersApi";
+import {
+  useCreateOrderMutation,
+  useDeleteOrderMutation,
+  useGetOrdersQuery,
+  useUpdateOrderMutation,
+} from "@/services/ordersApi";
 
 export default function Orders() {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const { toast } = useToast();
   const { data: orders, isLoading, isError } = useGetOrdersQuery();
   const [
-    createUser,
+    createOrder,
     {
       isLoading: createLoading,
       isError: createError,
       isSuccess: createSuccess,
     },
-  ] = useCreateUserMutation();
+  ] = useCreateOrderMutation();
 
   const [
-    deleteUser,
+    deleteOrder,
     {
       isLoading: deleteLoading,
       isError: deleteError,
       isSuccess: deleteSuccess,
     },
-  ] = useDeleteUserMutation();
+  ] = useDeleteOrderMutation();
 
   const [
-    updateUser,
+    updateOrder,
     {
       isLoading: updateLoading,
       isError: updateError,
       isSuccess: updateSuccess,
     },
-  ] = useUpdateUserMutation();
+  ] = useUpdateOrderMutation();
 
   if (isLoading) {
     return (
@@ -53,24 +58,22 @@ export default function Orders() {
     );
   }
 
-  console.log(orders);
-
   const handleOrderDelete = async (id) => {
     try {
       if (deleteLoading) return;
 
-      await deleteUser(id);
+      await deleteOrder(id);
       if (deleteError) throw Error;
       if (deleteSuccess) {
         toast({
-          title: "User deleted successfully.",
+          title: "Order deleted successfully.",
         });
       }
     } catch (error) {
       // console.log(error);
       toast({
         variant: "destructive",
-        title: "An error occurred during deleting user.",
+        title: "An error occurred during deleting order.",
       });
     }
   };
@@ -79,11 +82,14 @@ export default function Orders() {
     try {
       if (updateLoading) return;
 
-      await updateUser({ data: updatedData, id });
+      console.log(updatedData);
+      await updateOrder({ data: updatedData, id });
+
       if (updateError) throw Error;
+
       if (updateSuccess) {
         toast({
-          title: "User updated successfully.",
+          title: "Order updated successfully.",
         });
         setDialogOpen(false);
       }
@@ -91,7 +97,7 @@ export default function Orders() {
       // console.log(error);
       toast({
         variant: "destructive",
-        title: "An error occurred during updating user.",
+        title: "An error occurred during updating order.",
       });
     }
   };
@@ -100,11 +106,11 @@ export default function Orders() {
     try {
       if (createLoading) return;
 
-      await createUser(data);
+      await createOrder(data);
       if (createError) throw Error;
       if (createSuccess) {
         toast({
-          title: "User created successfully.",
+          title: "Order created successfully.",
         });
         setDialogOpen(false);
       }
@@ -112,7 +118,7 @@ export default function Orders() {
       // console.log(error);
       toast({
         variant: "destructive",
-        title: "An error occurred during creating user.",
+        title: "An error occurred during creating order.",
       });
     }
   };

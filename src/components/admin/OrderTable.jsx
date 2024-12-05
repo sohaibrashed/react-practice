@@ -60,7 +60,13 @@ export default function OrderTable({
               <TableCell className="py-2 px-4 border-b">
                 ${order.totalAmount.toFixed(2)}
               </TableCell>
-              <TableCell className="py-2 px-4 border-b">
+              <TableCell
+                className={`py-2 px-4 border-b capitalize ${
+                  order.paymentStatus === "Processing" ? "text-orange-600" : ""
+                } ${
+                  order.paymentStatus === "Completed" ? "text-green-600" : ""
+                }`}
+              >
                 {order.paymentStatus}
               </TableCell>
               <TableCell

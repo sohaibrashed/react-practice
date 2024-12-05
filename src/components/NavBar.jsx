@@ -78,6 +78,20 @@ export default function Navbar() {
             </NavLink>
           </NavigationMenuLink>
         </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink>
+            <NavLink
+              to="/about"
+              className={({ isActive }) =>
+                isActive
+                  ? "hover:text-gray-700 border-b-2 border-slate-300"
+                  : "hover:text-gray-700"
+              }
+            >
+              About us
+            </NavLink>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
   );

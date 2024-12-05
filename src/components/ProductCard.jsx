@@ -59,7 +59,7 @@ export default function ProductCard({ product, onClick }) {
           <span className="text-xl font-semibold text-gray-900">
             ${product.price}
           </span>
-          <Button className="bg-slate-950 text-white hover:bg-slate-900">
+          <Button className="bg-slate-950 text-white hover:bg-slate-700">
             <ShoppingCart size={20} />
           </Button>
         </div>

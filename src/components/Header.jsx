@@ -26,6 +26,23 @@ import { useSignoutMutation } from "@/services/usersApi";
 import { useToast } from "@/hooks/use-toast";
 import { logout } from "@/services/authSlice";
 import Navbar from "./NavBar";
+import { Drawer, DrawerTrigger } from "./ui/drawer";
+import CartDrawer from "./CartDrawer";
+
+const sampleCartItems = [
+  {
+    name: "Stylish T-Shirt",
+    price: 20,
+    quantity: 2,
+    image: "https://via.placeholder.com/100x100",
+  },
+  {
+    name: "Comfortable Jeans",
+    price: 40,
+    quantity: 1,
+    image: "https://via.placeholder.com/100x100",
+  },
+];
 
 export default function Header() {
   const { userInfo } = useSelector((state) => state.auth);
@@ -56,7 +73,7 @@ export default function Header() {
   return (
     <header className="bg-white shadow-md">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
-        <div className="text-lg font-bold">
+        <div className="text-2xl font-bold text-pink-600">
           <Link to="/">Clothify</Link>
         </div>
 
@@ -86,9 +103,14 @@ export default function Header() {
             </SheetContent>
           </Sheet>
 
-          <button title="Cart" className="hover:text-gray-700">
-            <ShoppingCart size={20} />
-          </button>
+          <Sheet>
+            <SheetTrigger>
+              <button title="Cart" className="hover:text-gray-700 pt-1">
+                <ShoppingCart size={20} />
+              </button>
+            </SheetTrigger>
+            <CartDrawer items={sampleCartItems} />
+          </Sheet>
           {userInfo?.token ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild disabled={isLoading}>
@@ -165,6 +187,16 @@ export default function Header() {
                   }
                 >
                   Contact us
+                </NavLink>
+                <NavLink
+                  to="/about"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "hover:text-gray-700 border-b-2 border-slate-300"
+                      : "hover:text-gray-700"
+                  }
+                >
+                  About us
                 </NavLink>
               </div>
             </SheetContent>

@@ -44,6 +44,7 @@ export default function OrderFormDialog({
     if (
       !totalAmount ||
       !paymentMethod ||
+      !paymentStatus ||
       !orderStatus ||
       !fullName ||
       !address ||
@@ -58,6 +59,7 @@ export default function OrderFormDialog({
     const updatedOrder = {
       totalAmount,
       paymentMethod,
+      paymentStatus,
       orderStatus,
       shippingAddress: {
         fullName,
