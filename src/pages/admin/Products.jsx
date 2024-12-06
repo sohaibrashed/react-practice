@@ -12,11 +12,18 @@ import {
   useGetProductsQuery,
   useUpdateProductMutation,
 } from "@/services/productsApi";
+import Paginate from "@/components/Paginate";
+import { useSearchParams } from "react-router";
 
 export default function AdminProducts() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [isDialogOpen, setDialogOpen] = useState(false);
   const { toast } = useToast();
-  const { data, isLoading, isError } = useGetProductsQuery();
+
+  const filters = Object.fromEntries(searchParams.entries());
+
+  const { data, isLoading, isError } = useGetProductsQuery(filters);
   const [
     createProduct,
     {
@@ -52,6 +59,9 @@ export default function AdminProducts() {
       </div>
     );
   }
+  const handlePageChange = (page) => {
+    setSearchParams({ page });
+  };
 
   const handleProductDelete = async (id) => {
     try {
@@ -145,7 +155,7 @@ export default function AdminProducts() {
         <Dialog open={isDialogOpen} onOpenChange={handleDialogChange}>
           <DialogTrigger asChild>
             <Button
-              className="bg-green-500 w-40 hover:bg-green-600"
+              className="bg-green-500 sm:w-40 ml-1 hover:bg-green-600"
               onClick={() => !createLoading && setDialogOpen(true)}
               disabled={createLoading}
             >
@@ -167,6 +177,14 @@ export default function AdminProducts() {
         handleDeleteProduct={handleProductDelete}
         isLoading={updateLoading || deleteLoading || false}
       />
+
+      <div className="mt-4">
+        <Paginate
+          currentPage={data?.pagination?.currentPage}
+          totalPages={data?.pagination?.totalPages}
+          onPageChange={(page) => handlePageChange(page)}
+        />
+      </div>
     </div>
   );
 }

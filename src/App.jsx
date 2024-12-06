@@ -18,6 +18,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import PageTransition from "./components/PageTransition";
 import ContactUs from "./pages/ContactUs";
 import AboutUs from "./pages/AboutUs";
+import OrderDetails from "./components/OrderDetails";
 
 function App() {
   return (
@@ -105,6 +106,7 @@ function App() {
             <Route path="products/:id" element={<Product />} />
 
             <Route path="orders" element={<Orders />} />
+            <Route path="orders/:id" element={<OrderDetails />} />
           </Route>
         </Route>
 

@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { EllipsisVertical } from "lucide-react";
+import { EllipsisVertical, Pencil, Trash, View } from "lucide-react";
 import OrderFormDialog from "./OrderFormDialog"; // Update UserFormDialog to OrderFormDialog
 import { Dialog, DialogTrigger } from "../ui/dialog";
 import { useNavigate } from "react-router";
@@ -95,6 +95,7 @@ export default function OrderTable({
                       onClick={() => navigate(`/admin/orders/${order._id}`)}
                     >
                       <Button variant="ghost" className="font-normal w-full">
+                        <View />
                         View
                       </Button>
                     </DropdownMenuItem>
@@ -105,6 +106,7 @@ export default function OrderTable({
                             variant="ghost"
                             className="font-normal w-full"
                           >
+                            <Pencil />
                             Update
                           </Button>
                         </DialogTrigger>
@@ -121,6 +123,7 @@ export default function OrderTable({
                       onClick={() => handleDeleteOrder(order._id)}
                     >
                       <Button variant="ghost" className="font-normal w-full">
+                        <Trash />
                         Delete
                       </Button>
                     </DropdownMenuItem>

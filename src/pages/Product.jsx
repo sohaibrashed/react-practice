@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams, useLocation } from "react-router";
 import { useGetProductQuery } from "@/services/productsApi";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -16,6 +16,7 @@ import { Star } from "lucide-react";
 
 export default function Product() {
   const { id } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const { data, isLoading, isError } = useGetProductQuery(id);
 
@@ -46,6 +47,8 @@ export default function Product() {
       </div>
     );
   }
+
+  const isProductPage = location.pathname === `/product/${id}`;
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4">
@@ -135,6 +138,25 @@ export default function Product() {
                 ))}
               </div>
             </div>
+
+            {isProductPage && (
+              <div className="flex flex-col sm:flex-row gap-4 mt-6">
+                <Button
+                  size="lg"
+                  className="w-full sm:w-auto bg-purple-500 hover:bg-purple-600 text-white"
+                  onClick={() => alert("Buy Now clicked")}
+                >
+                  Buy Now
+                </Button>
+                <Button
+                  size="lg"
+                  className="w-full sm:w-auto bg-pink-600 hover:bg-pink-700 text-white"
+                  onClick={() => alert("Add to Cart clicked")}
+                >
+                  Add to Cart
+                </Button>
+              </div>
+            )}
           </div>
         </Card>
       </div>

@@ -12,11 +12,18 @@ import {
   useUpdateUserMutation,
 } from "@/services/usersApi";
 import { CirclePlus, Search } from "lucide-react";
+import { useSearchParams } from "react-router";
+import Paginate from "@/components/Paginate";
 
 export default function Users() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [isDialogOpen, setDialogOpen] = useState(false);
   const { toast } = useToast();
-  const { data: users, isLoading, isError } = useGetUsersQuery();
+
+  const filters = Object.fromEntries(searchParams.entries());
+
+  const { data: users, isLoading, isError } = useGetUsersQuery(filters);
+
   const [
     createUser,
     {
@@ -51,6 +58,10 @@ export default function Users() {
       </div>
     );
   }
+
+  const handlePageChange = (page) => {
+    setSearchParams({ page });
+  };
 
   const handleUserDelete = async (id) => {
     try {
@@ -140,7 +151,7 @@ export default function Users() {
         <Dialog open={isDialogOpen} onOpenChange={handleDialogChange}>
           <DialogTrigger asChild>
             <Button
-              className="bg-green-500 w-40 hover:bg-green-600"
+              className="bg-green-500 sm:w-40 hover:bg-green-600 ml-1"
               onClick={() => !createLoading && setDialogOpen(true)}
               disabled={createLoading}
             >
@@ -160,6 +171,13 @@ export default function Users() {
         handleDeleteUser={handleUserDelete}
         isLoading={updateLoading || deleteLoading || false}
       />
+      <div className="mt-4">
+        <Paginate
+          currentPage={users?.pagination?.currentPage}
+          totalPages={users?.pagination?.totalPages}
+          onPageChange={(page) => handlePageChange(page)}
+        />
+      </div>
       {isError && "Something went wrong"}
     </div>
   );

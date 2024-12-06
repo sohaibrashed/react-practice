@@ -18,11 +18,15 @@ import {
   useGetOrdersQuery,
   useUpdateOrderMutation,
 } from "@/services/ordersApi";
+import Paginate from "@/components/Paginate";
+import { useSearchParams } from "react-router";
 
 export default function Orders() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [isDialogOpen, setDialogOpen] = useState(false);
   const { toast } = useToast();
-  const { data: orders, isLoading, isError } = useGetOrdersQuery();
+  const filters = Object.fromEntries(searchParams.entries());
+  const { data: orders, isLoading, isError } = useGetOrdersQuery(filters);
   const [
     createOrder,
     {
@@ -57,6 +61,10 @@ export default function Orders() {
       </div>
     );
   }
+
+  const handlePageChange = (page) => {
+    setSearchParams({ page });
+  };
 
   const handleOrderDelete = async (id) => {
     try {
@@ -169,6 +177,13 @@ export default function Orders() {
         handleDeleteOrder={handleOrderDelete}
         isLoading={updateLoading || deleteLoading || false}
       />
+      <div className="mt-4">
+        <Paginate
+          currentPage={orders?.pagination?.currentPage}
+          totalPages={orders?.pagination?.totalPages}
+          onPageChange={(page) => handlePageChange(page)}
+        />
+      </div>
       {isError && "Something went wrong"}
     </div>
   );

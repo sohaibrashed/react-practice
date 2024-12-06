@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { EllipsisVertical } from "lucide-react";
+import { EllipsisVertical, Pencil, Trash, View } from "lucide-react";
 import { Dialog, DialogTrigger } from "../ui/dialog";
 import { useNavigate } from "react-router";
 import ProdcutFormDialog from "./ProductFormDialog";
@@ -112,6 +112,7 @@ export default function ProductTable({
                       onClick={() => navigate(`/admin/products/${product._id}`)}
                     >
                       <Button variant="ghost" className="font-normal w-full">
+                        <View />
                         View
                       </Button>
                     </DropdownMenuItem>
@@ -122,6 +123,7 @@ export default function ProductTable({
                             variant="ghost"
                             className="font-normal w-full"
                           >
+                            <Pencil />
                             Update
                           </Button>
                         </DialogTrigger>
@@ -138,6 +140,7 @@ export default function ProductTable({
                       onClick={() => handleDeleteProduct(product._id)}
                     >
                       <Button variant="ghost" className="font-normal w-full">
+                        <Trash />
                         Delete
                       </Button>
                     </DropdownMenuItem>

@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { EllipsisVertical } from "lucide-react";
+import { EllipsisVertical, Pencil, Trash, View } from "lucide-react";
 import UserFormDialog from "./UserFormDialog";
 import { Dialog, DialogTrigger } from "../ui/dialog";
 import { useNavigate } from "react-router";
@@ -38,8 +38,10 @@ export default function UserTable({
         <TableCaption className="text-gray-500">
           A list of registered users.
         </TableCaption>
+
         <TableHeader>
           <TableRow className={"bg-slate-100 rounded-lg"}>
+            <TableHead className="text-left">ID</TableHead>
             <TableHead className="text-left">Name</TableHead>
             <TableHead className="text-left">Email</TableHead>
             <TableHead className="text-left">Role</TableHead>
@@ -50,6 +52,7 @@ export default function UserTable({
         <TableBody>
           {users.map((user) => (
             <TableRow key={user._id} className="hover:bg-gray-100">
+              <TableCell className="py-2 px-4 border-b">{user._id}</TableCell>
               <TableCell className="py-2 px-4 border-b">{user.name}</TableCell>
               <TableCell className="py-2 px-4 border-b">{user.email}</TableCell>
               <TableCell
@@ -78,6 +81,7 @@ export default function UserTable({
                       onClick={() => navigate(`/admin/users/${user._id}`)}
                     >
                       <Button variant="ghost" className="font-normal w-full">
+                        <View />
                         View
                       </Button>
                     </DropdownMenuItem>
@@ -88,6 +92,7 @@ export default function UserTable({
                             variant="ghost"
                             className="font-normal w-full"
                           >
+                            <Pencil />
                             Update
                           </Button>
                         </DialogTrigger>
@@ -104,6 +109,7 @@ export default function UserTable({
                       onClick={() => handleDeleteUser(user._id)}
                     >
                       <Button variant="ghost" className="font-normal w-full">
+                        <Trash />
                         Delete
                       </Button>
                     </DropdownMenuItem>
