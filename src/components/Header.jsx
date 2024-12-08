@@ -26,37 +26,27 @@ import { useSignoutMutation } from "@/services/usersApi";
 import { useToast } from "@/hooks/use-toast";
 import { logout } from "@/services/authSlice";
 import Navbar from "./NavBar";
-import { Drawer, DrawerTrigger } from "./ui/drawer";
 import CartDrawer from "./CartDrawer";
-
-const sampleCartItems = [
-  {
-    name: "Stylish T-Shirt",
-    price: 20,
-    quantity: 2,
-    image: "https://via.placeholder.com/100x100",
-  },
-  {
-    name: "Comfortable Jeans",
-    price: 40,
-    quantity: 1,
-    image: "https://via.placeholder.com/100x100",
-  },
-];
+import { resetCart } from "@/services/cartSlice";
 
 export default function Header() {
   const { userInfo } = useSelector((state) => state.auth);
+  const cartItems = useSelector((state) => state.cart.cartItems);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const [signout, { isLoading, isError }] = useSignoutMutation();
 
+  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+
   const handleSignout = async () => {
     try {
       if (isLoading) return;
       await signout().unwrap();
 
+      dispatch(resetCart());
       dispatch(logout());
       navigate("/account");
     } catch (err) {
@@ -71,11 +61,11 @@ export default function Header() {
     }
   };
   return (
-    <header className="bg-white shadow-md">
+    <header className="bg-white shadow-md sticky top-0 z-50 ">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
-        <div className="text-2xl font-bold text-pink-600">
+        <h4 className="text-2xl font-bold text-pink-600">
           <Link to="/">Clothify</Link>
-        </div>
+        </h4>
 
         <Navbar />
 
@@ -105,11 +95,18 @@ export default function Header() {
 
           <Sheet>
             <SheetTrigger>
-              <button title="Cart" className="hover:text-gray-700 pt-1">
-                <ShoppingCart size={20} />
-              </button>
+              <div className="relative">
+                <button title="Cart" className="hover:text-gray-700 pt-1">
+                  <ShoppingCart size={20} />
+                </button>
+                {cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
+              </div>
             </SheetTrigger>
-            <CartDrawer items={sampleCartItems} />
+            <CartDrawer />
           </Sheet>
           {userInfo?.token ? (
             <DropdownMenu>

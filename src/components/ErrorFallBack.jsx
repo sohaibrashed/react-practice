@@ -20,11 +20,7 @@ export default function ErrorFallback({ error, resetErrorBoundary }) {
           </CardDescription>
         </CardHeader>
         <div className="flex justify-center py-6">
-          <Button
-            size="lg"
-            onClick={resetErrorBoundary}
-            className="w-full md:w-auto"
-          >
+          <Button size="lg" onClick={resetErrorBoundary} className="">
             Try Again
           </Button>
         </div>

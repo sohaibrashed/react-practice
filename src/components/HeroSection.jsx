@@ -1,3 +1,4 @@
+import Autoplay from "embla-carousel-autoplay";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -40,6 +41,11 @@ export default function HeroSection() {
         <div className="flex justify-center lg:justify-end">
           <Carousel
             className="w-full sm:max-w-xl max-w-md rounded-lg shadow-lg"
+            plugins={[
+              Autoplay({
+                delay: 4000,
+              }),
+            ]}
             opts={{
               loop: true,
             }}

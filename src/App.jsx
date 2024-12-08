@@ -19,6 +19,8 @@ import PageTransition from "./components/PageTransition";
 import ContactUs from "./pages/ContactUs";
 import AboutUs from "./pages/AboutUs";
 import OrderDetails from "./components/OrderDetails";
+import Checkout from "./pages/Checkout";
+import OrderSummary from "./pages/OrderSummary";
 
 function App() {
   return (
@@ -53,6 +55,7 @@ function App() {
               </PageTransition>
             }
           />
+
           <Route
             path="/products/category/:type/:subCategory?"
             element={<Products />}
@@ -79,6 +82,25 @@ function App() {
 
           <Route path="" element={<Private />}>
             <Route path="/profile" element={<Profile />} />
+
+            <Route
+              path="/checkout"
+              index
+              element={
+                <PageTransition>
+                  <Checkout />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/ordersummary/:id"
+              index
+              element={
+                <PageTransition>
+                  <OrderSummary />
+                </PageTransition>
+              }
+            />
           </Route>
         </Route>
 

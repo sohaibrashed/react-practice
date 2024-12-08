@@ -3,18 +3,19 @@ import { Button } from "@/components/ui/button";
 import { Heart, ShoppingCart, Star } from "lucide-react";
 import Rating from "react-rating";
 import { Badge } from "./ui/badge";
+import AddToCart from "./AddToCart";
 
 export default function ProductCard({ product, onClick }) {
   return (
     <Card
       onClick={() => onClick(product._id)}
-      className="border border-gray-200 rounded-lg shadow-md overflow-hidden bg-white cursor-pointer"
+      className="group border border-gray-200 rounded-none overflow-hidden bg-white cursor-pointer"
     >
       <div className="relative">
         <img
           src={product.images?.[0]}
           alt={product.name}
-          className="w-full h-64 object-cover"
+          className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105"
         />
         <div className="absolute top-2 right-2 flex space-x-2">
           <Button
@@ -23,12 +24,6 @@ export default function ProductCard({ product, onClick }) {
           >
             <Heart size={20} />
           </Button>
-          {/* <Button
-            variant="outline"
-            className="bg-white text-gray-600 hover:text-gray-900"
-          >
-            <ShoppingCart size={20} />
-          </Button> */}
         </div>
       </div>
       <div className="p-4">
@@ -55,13 +50,13 @@ export default function ProductCard({ product, onClick }) {
           />
         </div>
 
-        <div className="mt-2 flex items-center justify-between">
+        <div className="mt-2 flex items-center justify-between h-12">
           <span className="text-xl font-semibold text-gray-900">
             ${product.price}
           </span>
-          <Button className="bg-slate-950 text-white hover:bg-slate-700">
+          <AddToCart item={product}>
             <ShoppingCart size={20} />
-          </Button>
+          </AddToCart>
         </div>
       </div>
     </Card>
