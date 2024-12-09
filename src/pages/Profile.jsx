@@ -48,14 +48,14 @@ export default function ProfileScreen() {
 
   return (
     <div className="container mx-auto p-6 lg:p-12 space-y-8">
-      <Card className="p-6 shadow-lg bg-gradient-to-r from-pink-500 to-purple-600 text-white space-y-4">
+      <Card className="p-6 shadow-lg bg-gradient-to-r from-pink-400 to-purple-500 text-white space-y-4">
         <div className="flex flex-col md:flex-row items-center gap-4">
           <Smile size={32} />
           <div className="text-center md:text-left">
-            <h1 className="text-3xl font-bold">
+            <h1 className="text-xl md:text-3xl font-bold">
               Welcome back, {userInfo.name}!
             </h1>
-            <p className="text-lg mt-2">
+            <p className="text-sm md:text-lg mt-2">
               Ready to explore your account and manage your orders? We're here
               to help you every step of the way!
             </p>
@@ -63,7 +63,6 @@ export default function ProfileScreen() {
         </div>
       </Card>
 
-      {/* User Details */}
       <Card className="p-6 shadow-lg space-y-4">
         <div className="flex flex-col md:flex-row items-center gap-6">
           <Avatar className="w-28 h-28">
@@ -74,7 +73,7 @@ export default function ProfileScreen() {
           </Avatar>
           <div className="flex flex-col space-y-2 text-center md:text-left">
             <div className="flex items-center gap-2">
-              <h2 className="text-2xl font-bold">{userInfo.name}</h2>
+              <h2 className="text-xl md:text-2xl font-bold">{userInfo.name}</h2>
               <button
                 title="Update Profile"
                 onClick={handleUpdateUser}
@@ -84,12 +83,13 @@ export default function ProfileScreen() {
               </button>
             </div>
             <p className="text-sm text-gray-500">{userInfo.userEmail}</p>
-            <Badge variant="outline">{userInfo.role}</Badge>
+            <Badge className={"text-slate-600"} variant="outline">
+              {userInfo.role}
+            </Badge>
           </div>
         </div>
       </Card>
 
-      {/* Address Section */}
       <Card className="p-6 shadow-lg space-y-4">
         <div className="flex items-center gap-2">
           <h3 className="text-xl font-semibold">Address Book</h3>
@@ -114,7 +114,9 @@ export default function ProfileScreen() {
           </div>
         ) : (
           <div className="flex items-center gap-2">
-            <p>No address found. Please add your address.</p>
+            <p className="text-sm md:text-base">
+              No address found. Please add your address.
+            </p>
             <button onClick={handleAddAddress} className="hover:text-green-600">
               <PlusCircleIcon size={18} />
             </button>
@@ -122,30 +124,29 @@ export default function ProfileScreen() {
         )}
       </Card>
 
-      {/* Tabs Section */}
-      <Tabs defaultValue="to-pay" className="w-full">
-        <TabsList className="flex justify-center space-x-4 overflow-auto">
-          <TabsTrigger value="all-orders" className="flex-1">
+      <Tabs defaultValue="all-orders">
+        <TabsList className="flex justify-center overflow-x-scroll space-x-2 scrollbar-hide">
+          <TabsTrigger value="all-orders" className="flex-1 flex-shrink-0">
             <Package size={18} className="mr-2" />
             All Orders
           </TabsTrigger>
-          <TabsTrigger value="to-pay" className="flex-1">
+          <TabsTrigger value="to-pay" className="flex-1 flex-shrink-0">
             <CreditCard size={18} className="mr-2" />
             To Pay
           </TabsTrigger>
-          <TabsTrigger value="to-ship" className="flex-1">
+          <TabsTrigger value="to-ship" className="flex-1 flex-shrink-0">
             <Truck size={18} className="mr-2" />
             To Ship
           </TabsTrigger>
-          <TabsTrigger value="to-receive" className="flex-1">
+          <TabsTrigger value="to-receive" className="flex-1 flex-shrink-0">
             <House size={18} className="mr-2" />
             To Receive
           </TabsTrigger>
-          <TabsTrigger value="to-review" className="flex-1">
+          <TabsTrigger value="to-review" className="flex-1 flex-shrink-0">
             <MessageCircle size={18} className="mr-2" />
             To Review
           </TabsTrigger>
-          <TabsTrigger value="returns" className="flex-1">
+          <TabsTrigger value="returns" className="flex-1 flex-shrink-0">
             <Undo2 size={18} className="mr-2" />
             Returns & Cancellations
           </TabsTrigger>

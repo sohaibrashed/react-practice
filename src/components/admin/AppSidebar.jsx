@@ -12,6 +12,7 @@ import {
 import { Link, NavLink, useNavigate } from "react-router";
 import Logo from "../Logo";
 import {
+  ChartBarStacked,
   ChartNoAxesCombined,
   ChevronDown,
   CircleGauge,
@@ -67,7 +68,7 @@ export function AppSidebar() {
   }
   return (
     <Sidebar>
-      <SidebarHeader className="flex flex-row items-center px-4 py-3 font-bold text-lg border-b border-gray-700">
+      <SidebarHeader className="flex flex-row items-center gap-2 px-4 py-3 font-bold text-lg border-b border-gray-300">
         <Link to={"/"}>
           <Logo className={"rounded-full w-16 h-16"} />
         </Link>
@@ -75,11 +76,11 @@ export function AppSidebar() {
           <h4 className="text-lg font-bold text-pink-600">
             <Link to="/">Clothify</Link>
           </h4>
-          <p className="text-xs text-gray-500">E-Commerce Store</p>
+          <p className="text-xs text-slate-400">e-commerce store</p>
         </div>
         <button
           onClick={handleSignout}
-          className="hover:bg-gray-500 hover:rounded-full p-2 hover:text-slate-300"
+          className="hover:bg-pink-300 hover:rounded-full p-2 hover:text-white"
         >
           <LogOut size={16} />
         </button>
@@ -90,7 +91,9 @@ export function AppSidebar() {
             to="/admin/dashboard"
             className={({ isActive }) =>
               `flex justify-start items-center gap-2 py-2 px-3 rounded-lg ${
-                isActive ? "bg-gray-800" : "hover:bg-gray-700"
+                isActive
+                  ? "bg-pink-100 border-solid border border-pink-300"
+                  : "hover:bg-pink-100 "
               }`
             }
           >
@@ -101,8 +104,10 @@ export function AppSidebar() {
             to="/admin/analytics"
             className={({ isActive }) =>
               `flex justify-start items-center gap-2 py-2 px-3 rounded-lg ${
-                isActive ? "bg-gray-800" : "hover:bg-gray-700"
-              }`
+                          isActive
+                            ? "bg-pink-100 border-solid border border-pink-300"
+                            : "hover:bg-pink-100 "
+                        }`
             }
           >
             <ChartNoAxesCombined size={20} />
@@ -112,8 +117,10 @@ export function AppSidebar() {
             to="/admin/settings"
             className={({ isActive }) =>
               `flex justify-start items-center gap-2 py-2 px-3 rounded-lg ${
-                isActive ? "bg-gray-800" : "hover:bg-gray-700"
-              }`
+                          isActive
+                            ? "bg-pink-100 border-solid border border-pink-300"
+                            : "hover:bg-pink-100 "
+                        }`
             }
           >
             <Settings />
@@ -137,7 +144,9 @@ export function AppSidebar() {
                       to="/admin/orders"
                       className={({ isActive }) =>
                         `flex justify-start items-center gap-2 py-2 px-3 rounded-lg ${
-                          isActive ? "bg-gray-800" : "hover:bg-gray-700"
+                          isActive
+                            ? "bg-pink-100 border-solid border border-pink-300"
+                            : "hover:bg-pink-100 "
                         }`
                       }
                     >
@@ -150,7 +159,9 @@ export function AppSidebar() {
                       to="/admin/products"
                       className={({ isActive }) =>
                         `flex justify-start items-center gap-2 py-2 px-3 rounded-lg ${
-                          isActive ? "bg-gray-800" : "hover:bg-gray-700"
+                          isActive
+                            ? "bg-pink-100 border-solid border border-pink-300"
+                            : "hover:bg-pink-100 "
                         }`
                       }
                     >
@@ -163,12 +174,29 @@ export function AppSidebar() {
                       to="/admin/users"
                       className={({ isActive }) =>
                         `flex justify-start items-center gap-2 py-2 px-3 rounded-lg ${
-                          isActive ? "bg-gray-800" : "hover:bg-gray-700"
+                          isActive
+                            ? "bg-pink-100 border-solid border border-pink-300"
+                            : "hover:bg-pink-100 "
                         }`
                       }
                     >
                       <User size={18} className="stroke-pink-400" />
                       Users
+                    </NavLink>
+                  </SidebarMenuSubItem>
+                  <SidebarMenuSubItem>
+                    <NavLink
+                      to="/admin/categories"
+                      className={({ isActive }) =>
+                        `flex justify-start items-center gap-2 py-2 px-3 rounded-lg ${
+                          isActive
+                            ? "bg-pink-100 border-solid border border-pink-300"
+                            : "hover:bg-pink-100 "
+                        }`
+                      }
+                    >
+                      <ChartBarStacked size={18} className="stroke-pink-400" />
+                      Categories
                     </NavLink>
                   </SidebarMenuSubItem>
                 </SidebarMenuSub>
@@ -177,8 +205,8 @@ export function AppSidebar() {
           </Collapsible>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="px-4 py-3 border-t border-gray-700">
-        <div className="text-sm">
+      <SidebarFooter className="px-4 py-3 border-t border-gray-200">
+        <div className="text-sm text-slate-400">
           © {new Date().getFullYear()} Clothify - Admin Panel
         </div>
       </SidebarFooter>

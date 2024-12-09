@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Table,
   TableBody,
@@ -7,6 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
+import { Link } from "react-router";
 
 export default function ProfileDataTable({
   orders = [],
@@ -22,18 +22,34 @@ export default function ProfileDataTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px]">Invoice</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Method</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
+              <TableHead className="text-left">Product</TableHead>
+              <TableHead className="text-left">Price</TableHead>
+              <TableHead className="text-left">Qty</TableHead>
+              <TableHead className="text-right">Total</TableHead>
+              <TableHead className="text-right">Summary</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {orders.map((item) => {
-              <TableRow>
-                <TableCell></TableCell>
-              </TableRow>;
-            })}
+            {orders.map((order) =>
+              order.items.map((item) => (
+                <TableRow key={item._id}>
+                  <TableCell>{item.product?.name || "-----"}</TableCell>
+                  <TableCell>{item.price.toFixed(2)}</TableCell>
+                  <TableCell>{item.quantity}</TableCell>
+                  <TableCell className="text-right">
+                    {item.total.toFixed(2)}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Link
+                      to={`/ordersummary/${order._id}`}
+                      className="text-blue-500"
+                    >
+                      Details
+                    </Link>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       )}

@@ -55,7 +55,7 @@ export default function OrderSummary() {
       <Card className="p-6 shadow-lg">
         <div className="flex items-center gap-4 mb-6">
           <Package size={28} className="text-pink-600" />
-          <h2 className="text-2xl sm:text-3xl font-bold">Order Summary</h2>
+          <h2 className="text-xl sm:text-3xl font-bold">Order Summary</h2>
         </div>
         <div className="space-y-4">
           <div className="flex items-center gap-2">
@@ -126,22 +126,22 @@ export default function OrderSummary() {
               <div className="flex items-center gap-4">
                 <img
                   src={
-                    item.product.images[0] ||
+                    item.product?.images[0] ||
                     "https://via.placeholder.com/100x100"
                   }
-                  alt={item.product.name}
+                  alt={item.product?.name}
                   className="w-24 h-24 object-cover rounded-md"
                 />
                 <div className="space-y-1">
                   <p className="text-lg font-semibold line-clamp-1">
-                    {item.product.name}
+                    {item.product?.name || "------"}
                   </p>
                   <p className="text-sm text-gray-500">
-                    {item.quantity} x ${item.price.toFixed(2)}
+                    {item?.quantity} x ${item?.price.toFixed(2)}
                   </p>
                 </div>
               </div>
-              <p className="text-lg font-semibold">${item.total.toFixed(2)}</p>
+              <p className="text-lg font-semibold">${item?.total.toFixed(2)}</p>
             </div>
           ))}
           <div className="flex justify-between items-center border-t pt-4 mt-4">

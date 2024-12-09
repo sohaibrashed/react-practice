@@ -21,6 +21,7 @@ import AboutUs from "./pages/AboutUs";
 import OrderDetails from "./components/OrderDetails";
 import Checkout from "./pages/Checkout";
 import OrderSummary from "./pages/OrderSummary";
+import Categories from "./pages/admin/Categories";
 
 function App() {
   return (
@@ -63,6 +64,7 @@ function App() {
           <Route path="/products/search/:keyword" element={<Products />} />
 
           {/* category?/:category?/:subcategory?/search?/:keyword?/page?/:pageNumber? */}
+
           <Route
             path="/account/:type?"
             element={
@@ -122,6 +124,14 @@ function App() {
               element={
                 <PageTransition>
                   <AdminProducts />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="categories"
+              element={
+                <PageTransition>
+                  <Categories />
                 </PageTransition>
               }
             />
