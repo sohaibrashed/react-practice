@@ -9,11 +9,13 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { Link, NavLink } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 import Logo from "../Logo";
 import {
   ChartNoAxesCombined,
+  ChevronDown,
   CircleGauge,
+  LogOut,
   Package,
   Settings,
   ShoppingBasket,
@@ -25,14 +27,62 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../ui/collapsible";
+import { useDispatch } from "react-redux";
+import { resetCart } from "@/services/cartSlice";
+import { logout } from "@/services/authSlice";
+import { useSignoutMutation } from "@/services/usersApi";
+import { useToast } from "@/hooks/use-toast";
 
 export function AppSidebar() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const [signout, { isLoading, isError, isSuccess }] = useSignoutMutation();
+
+  const handleSignout = async () => {
+    try {
+      if (isLoading) return;
+      await signout().unwrap();
+
+      dispatch(resetCart());
+      dispatch(logout());
+      navigate("/account");
+    } catch (err) {
+      // console.log(err);
+    }
+  };
+
+  if (isError) {
+    toast({
+      variant: "destructive",
+      title: "An error occurred during sign out.",
+    });
+  }
+
+  if (isSuccess) {
+    toast({
+      title: "Signed out Successfully 👋",
+    });
+  }
   return (
     <Sidebar>
-      <SidebarHeader className="px-4 py-3 font-bold text-lg border-b border-gray-700">
+      <SidebarHeader className="flex flex-row items-center px-4 py-3 font-bold text-lg border-b border-gray-700">
         <Link to={"/"}>
-          <Logo className={"w-20"} />
+          <Logo className={"rounded-full w-16 h-16"} />
         </Link>
+        <div className="">
+          <h4 className="text-lg font-bold text-pink-600">
+            <Link to="/">Clothify</Link>
+          </h4>
+          <p className="text-xs text-gray-500">E-Commerce Store</p>
+        </div>
+        <button
+          onClick={handleSignout}
+          className="hover:bg-gray-500 hover:rounded-full p-2 hover:text-slate-300"
+        >
+          <LogOut size={16} />
+        </button>
       </SidebarHeader>
       <SidebarContent className="flex-1 px-2">
         <SidebarGroup>
@@ -44,7 +94,7 @@ export function AppSidebar() {
               }`
             }
           >
-            <CircleGauge size={20} />
+            <CircleGauge size={18} className="stroke-pink-400" />
             Dashboard
           </NavLink>
           {/* <NavLink
@@ -73,9 +123,11 @@ export function AppSidebar() {
           <Collapsible defaultOpen className="group/collapsible">
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton>
-                  <SquareKanban />
-                  <span className="text-base font-semibold">Inventory</span>
+                <SidebarMenuButton className="flex justify-start items-center gap-2 py-2 px-3 rounded-lg">
+                  <SquareKanban size={18} className="stroke-pink-400" />
+
+                  <span className="text-base">Inventory</span>
+                  <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent>
@@ -89,7 +141,7 @@ export function AppSidebar() {
                         }`
                       }
                     >
-                      <Package />
+                      <Package size={18} className="stroke-pink-400" />
                       Orders
                     </NavLink>
                   </SidebarMenuSubItem>
@@ -102,7 +154,7 @@ export function AppSidebar() {
                         }`
                       }
                     >
-                      <ShoppingBasket />
+                      <ShoppingBasket size={18} className="stroke-pink-400" />
                       Products
                     </NavLink>
                   </SidebarMenuSubItem>
@@ -115,7 +167,7 @@ export function AppSidebar() {
                         }`
                       }
                     >
-                      <User />
+                      <User size={18} className="stroke-pink-400" />
                       Users
                     </NavLink>
                   </SidebarMenuSubItem>

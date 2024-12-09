@@ -15,11 +15,32 @@ import {
   Undo2,
   Smile,
 } from "lucide-react";
+import { useGetMineOrderQuery } from "@/services/ordersApi";
+import LoadingSpinner from "@/components/ui/loadingSpinner";
+import { Table, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import ProfileDataTable from "@/components/ProfileDataTable";
 
 export default function ProfileScreen() {
   const { address } = useSelector((state) => state.address);
   const { userInfo } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+
+  const {
+    data,
+    isLoading: orderLoading,
+    isError: orderError,
+  } = useGetMineOrderQuery();
+
+  if (orderLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  const orders = data?.data;
+  console.log(orders);
 
   const handleAddAddress = () => {};
   const handleEditAddress = () => {};
@@ -129,35 +150,29 @@ export default function ProfileScreen() {
             Returns & Cancellations
           </TabsTrigger>
         </TabsList>
+        <TabsContent value="all-orders">
+          <ProfileDataTable orders={orders} emptyMessage="No orders found" />
+        </TabsContent>
         <TabsContent value="to-pay">
-          <div className="flex flex-col items-center justify-center h-48 text-gray-600">
-            <p>No orders to pay</p>
-          </div>
+          <ProfileDataTable orders={orders} emptyMessage="No orders to pay" />
         </TabsContent>
         <TabsContent value="to-ship">
-          <div className="flex flex-col items-center justify-center h-48 text-gray-600">
-            <p>No orders to ship</p>
-          </div>
+          <ProfileDataTable orders={orders} emptyMessage="No orders to ship" />
         </TabsContent>
         <TabsContent value="to-receive">
-          <div className="flex flex-col items-center justify-center h-48 text-gray-600">
-            <p>No orders to receive</p>
-          </div>
+          <ProfileDataTable
+            orders={orders}
+            emptyMessage="No orders to receive"
+          />
         </TabsContent>
         <TabsContent value="to-review">
-          <div className="flex flex-col items-center justify-center h-48 text-gray-600">
-            <p>No items to review</p>
-          </div>
+          <ProfileDataTable orders={orders} emptyMessage="No items to review" />
         </TabsContent>
         <TabsContent value="returns">
-          <div className="flex flex-col items-center justify-center h-48 text-gray-600">
-            <p>No returns or cancellations</p>
-          </div>
-        </TabsContent>
-        <TabsContent value="all-orders">
-          <div className="flex flex-col items-center justify-center h-48 text-gray-600">
-            <p>No orders found</p>
-          </div>
+          <ProfileDataTable
+            orders={orders}
+            emptyMessage="No returns or cancellations"
+          />
         </TabsContent>
       </Tabs>
     </div>

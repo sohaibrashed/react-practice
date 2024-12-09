@@ -51,15 +51,16 @@ export default function Header() {
       navigate("/account");
     } catch (err) {
       // console.log(err);
-
-      if (isError) {
-        toast({
-          variant: "destructive",
-          title: "An error occurred during sign out.",
-        });
-      }
     }
   };
+
+  if (isError) {
+    toast({
+      variant: "destructive",
+      title: "An error occurred during sign out.",
+    });
+  }
+
   return (
     <header className="bg-white shadow-md sticky top-0 z-50 ">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
