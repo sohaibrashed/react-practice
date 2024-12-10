@@ -1,10 +1,12 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import CategoryForm from "@/components/admin/CategoryForm";
+import SubCategoryForm from "@/components/admin/SubCategoryForm";
 
 export default function Categories() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
-      <div className="bg-white shadow-lg rounded-lg w-full max-w-md p-6">
-        <Tabs defaultValue={"category"} className="w-full">
+      <div className="bg-white shadow-lg rounded-lg w-full max-w-lg p-6">
+        <Tabs defaultValue="category" className="w-full">
           <TabsList className="flex justify-center mb-6">
             <TabsTrigger
               value="category"
@@ -20,9 +22,9 @@ export default function Categories() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="category">Category form</TabsContent>
+          <CategoryForm />
 
-          <TabsContent value="subCategory">sub-category form</TabsContent>
+          <SubCategoryForm />
         </Tabs>
       </div>
     </div>

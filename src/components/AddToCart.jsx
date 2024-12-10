@@ -6,7 +6,6 @@ import {
   incrementQuantityOfItem,
 } from "@/services/cartSlice";
 import { MinusCircleIcon, PlusCircleIcon } from "lucide-react";
-import { useState } from "react";
 
 export default function AddToCart({ className = "", size, children, item }) {
   const dispatch = useDispatch();
