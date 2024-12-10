@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -17,7 +18,8 @@ import { Button } from "../ui/button";
 import { EllipsisVertical, Pencil, Trash, View } from "lucide-react";
 import UserFormDialog from "./UserFormDialog";
 import { Dialog, DialogTrigger } from "../ui/dialog";
-import { useNavigate } from "react-router";
+import { Drawer } from "../ui/drawer";
+import SingleUser from "@/pages/admin/SingleUser";
 
 export default function UserTable({
   users,
@@ -25,11 +27,23 @@ export default function UserTable({
   handleDeleteUser,
   isLoading = false,
 }) {
-  const navigate = useNavigate();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+
   const handleFormSubmit = (updatedData, id) => {
     if (onUpdateUser) {
       onUpdateUser(updatedData, id);
     }
+  };
+
+  const openDrawer = (id) => {
+    setSelectedUserId(id);
+    setIsDrawerOpen(true);
+  };
+
+  const closeDrawer = () => {
+    setIsDrawerOpen(false);
+    setSelectedUserId(null);
   };
 
   return (
@@ -41,7 +55,6 @@ export default function UserTable({
 
         <TableHeader>
           <TableRow className={"bg-slate-100 rounded-lg"}>
-            <TableHead className="text-left">ID</TableHead>
             <TableHead className="text-left">Name</TableHead>
             <TableHead className="text-left">Email</TableHead>
             <TableHead className="text-left">Role</TableHead>
@@ -52,7 +65,6 @@ export default function UserTable({
         <TableBody>
           {users.map((user) => (
             <TableRow key={user._id} className="hover:bg-gray-100">
-              <TableCell className="py-2 px-4 border-b">{user._id}</TableCell>
               <TableCell className="py-2 px-4 border-b">{user.name}</TableCell>
               <TableCell className="py-2 px-4 border-b">{user.email}</TableCell>
               <TableCell
@@ -77,10 +89,12 @@ export default function UserTable({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-32">
-                    <DropdownMenuItem
-                      onClick={() => navigate(`/admin/users/${user._id}`)}
-                    >
-                      <Button variant="ghost" className="font-normal w-full">
+                    <DropdownMenuItem>
+                      <Button
+                        variant="ghost"
+                        className="font-normal w-full flex items-center"
+                        onClick={() => openDrawer(user._id)}
+                      >
                         <View />
                         View
                       </Button>
@@ -108,7 +122,10 @@ export default function UserTable({
                       className="text-red-600"
                       onClick={() => handleDeleteUser(user._id)}
                     >
-                      <Button variant="ghost" className="font-normal w-full">
+                      <Button
+                        variant="ghost"
+                        className="font-normal w-full hover:bg-red-100 hover:text-red-600"
+                      >
                         <Trash />
                         Delete
                       </Button>
@@ -120,6 +137,12 @@ export default function UserTable({
           ))}
         </TableBody>
       </Table>
+
+      {isDrawerOpen && (
+        <Drawer onOpenChange={closeDrawer} open={isDrawerOpen}>
+          <SingleUser id={selectedUserId} />
+        </Drawer>
+      )}
     </div>
   );
 }

@@ -13,7 +13,6 @@ import AdminLayout from "./layouts/AdminLayout";
 import Users from "./pages/admin/Users";
 import AdminProducts from "./pages/admin/Products";
 import Orders from "./pages/admin/Orders";
-import SingleUser from "./pages/admin/SingleUser";
 import ScrollToTop from "./components/ScrollToTop";
 import PageTransition from "./components/PageTransition";
 import ContactUs from "./pages/ContactUs";
@@ -117,7 +116,6 @@ function App() {
                 </PageTransition>
               }
             />
-            <Route path="users/:id" element={<SingleUser />} />
 
             <Route
               path="products"

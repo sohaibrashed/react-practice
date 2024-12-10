@@ -20,6 +20,7 @@ import {
 } from "@/services/ordersApi";
 import Paginate from "@/components/Paginate";
 import { useSearchParams } from "react-router";
+import { Input } from "@/components/ui/input";
 
 export default function Orders() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -139,21 +140,8 @@ export default function Orders() {
 
   return (
     <div className="min-h-screen">
-      <h1 className="text-4xl font-bold mb-8">Order Management</h1>
       <div className="flex justify-between items-center mb-4">
-        <div className="relative w-full max-w-md">
-          <input
-            type="text"
-            // value={searchQuery}
-            // onChange={handleSearchChange}
-            placeholder="Search orders..."
-            className="w-full py-2 px-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-          <Search
-            className="absolute right-3 top-2.5 text-gray-400"
-            size={20}
-          />
-        </div>
+        <h1 className="text-4xl font-bold">Orders</h1>
         {/* <Dialog open={isDialogOpen} onOpenChange={handleDialogChange}>
           <DialogTrigger asChild>
             <Button
@@ -170,6 +158,16 @@ export default function Orders() {
             isLoading={createLoading}
           />
         </Dialog> */}
+      </div>
+      <div className="relative w-full mb-2 flex items-center">
+        <Input
+          type="text"
+          // value={searchQuery}
+          // onChange={handleSearchChange}
+          placeholder="Search..."
+          className="rounded-lg shadow-sm py-6"
+        />
+        <Search className="absolute right-3 text-gray-400" size={20} />
       </div>
       <OrderTable
         orders={orders?.data}

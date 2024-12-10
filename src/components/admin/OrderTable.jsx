@@ -41,7 +41,7 @@ export default function OrderTable({
         </TableCaption>
         <TableHeader>
           <TableRow className={"bg-slate-100 rounded-lg"}>
-            <TableHead className="text-left">Order ID</TableHead>
+            {/* <TableHead className="text-left">Order ID</TableHead> */}
             <TableHead className="text-left">Customer Name</TableHead>
             <TableHead className="text-left">Total Amount</TableHead>
             <TableHead className="text-left">Payment Status</TableHead>
@@ -53,7 +53,7 @@ export default function OrderTable({
         <TableBody>
           {orders.map((order) => (
             <TableRow key={order._id} className="hover:bg-gray-100">
-              <TableCell className="py-2 px-4 border-b">{order._id}</TableCell>
+              {/* <TableCell className="py-2 px-4 border-b">{order._id}</TableCell> */}
               <TableCell className="py-2 px-4 border-b">
                 {order.shippingAddress.fullName}
               </TableCell>

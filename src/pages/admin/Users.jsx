@@ -14,6 +14,7 @@ import {
 import { CirclePlus, Search } from "lucide-react";
 import { useSearchParams } from "react-router";
 import Paginate from "@/components/Paginate";
+import { Input } from "@/components/ui/input";
 
 export default function Users() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -133,21 +134,9 @@ export default function Users() {
 
   return (
     <div className="min-h-screen">
-      <h1 className="text-4xl font-bold mb-8">User Management</h1>
       <div className="flex justify-between items-center mb-4">
-        <div className="relative w-full max-w-md">
-          <input
-            type="text"
-            // value={searchQuery}
-            // onChange={handleSearchChange}
-            placeholder="Search users..."
-            className="w-full py-2 px-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-          <Search
-            className="absolute right-3 top-2.5 text-gray-400"
-            size={20}
-          />
-        </div>
+        <h1 className="text-4xl font-bold">Users</h1>
+
         <Dialog open={isDialogOpen} onOpenChange={handleDialogChange}>
           <DialogTrigger asChild>
             <Button
@@ -164,6 +153,16 @@ export default function Users() {
             isLoading={createLoading}
           />
         </Dialog>
+      </div>
+      <div className="relative w-full mb-2 flex items-center">
+        <Input
+          type="text"
+          // value={searchQuery}
+          // onChange={handleSearchChange}
+          placeholder="Search..."
+          className="rounded-lg shadow-sm py-6"
+        />
+        <Search className="absolute right-3 text-gray-400" size={20} />
       </div>
       <UserTable
         users={users?.data}

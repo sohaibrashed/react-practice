@@ -40,7 +40,7 @@ export default function ProductTable({
         </TableCaption>
         <TableHeader>
           <TableRow className={"bg-slate-100 rounded-lg"}>
-            <TableHead className="text-left">ID</TableHead>
+            {/* <TableHead className="text-left">ID</TableHead> */}
             <TableHead className="text-left">Name</TableHead>
             <TableHead className="text-left">Description</TableHead>
             <TableHead className="text-left">Brand</TableHead>
@@ -60,23 +60,23 @@ export default function ProductTable({
         <TableBody>
           {products.map((product) => (
             <TableRow key={product._id} className="hover:bg-gray-100">
-              <TableCell className="py-2 px-4 border-b">
+              {/* <TableCell className="py-2 px-4 border-b">
                 {product._id}
-              </TableCell>
+              </TableCell> */}
               <TableCell className="py-2 px-4 border-b">
                 {product.name}
               </TableCell>
               <TableCell className="py-2 px-4 border-b">
-                {product.description}
+                {product?.description.slice(0, 24)}...
               </TableCell>
               <TableCell className="py-2 px-4 border-b ">
                 {product.brand}
               </TableCell>
               <TableCell className="py-2 px-4 border-b">
-                {product.category}
+                {product.category?.name}
               </TableCell>
               <TableCell className="py-2 px-4 border-b">
-                {product.subCategory}
+                {product.subCategory?.name}
               </TableCell>
               <TableCell className="py-2 px-4 border-b">
                 {product.size}

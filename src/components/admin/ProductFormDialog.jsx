@@ -16,6 +16,11 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import LoadingSpinner from "../ui/loadingSpinner";
+import {
+  useGetCategoriesQuery,
+  useGetSubCategoriesQuery,
+} from "@/services/categoryApi";
+import { Textarea } from "../ui/textarea";
 
 export default function ProductFormDialog({
   onSubmit,
@@ -26,8 +31,10 @@ export default function ProductFormDialog({
   const [name, setName] = useState(product.name || "");
   const [description, setDescription] = useState(product.description || "");
   const [price, setPrice] = useState(product.price || "");
-  const [category, setCategory] = useState(product.category || "");
-  const [subCategory, setSubCategory] = useState(product.subCategory || "");
+  const [category, setCategory] = useState(product.category?.name || "");
+  const [subCategory, setSubCategory] = useState(
+    product.subCategory?.name || ""
+  );
   const [size, setSize] = useState(product.size || "");
   const [color, setColor] = useState(product.color || "");
   const [material, setMaterial] = useState(product.material || "");
@@ -35,6 +42,18 @@ export default function ProductFormDialog({
   const [tags, setTags] = useState(product.tags?.join(", ") || "");
   const [brand, setBrand] = useState(product.brand || "");
   const [images, setImages] = useState(product.images?.join("\n") || "");
+
+  const {
+    data: categories,
+    isLoading: categoriesLoading,
+    isError: categoriesError,
+  } = useGetCategoriesQuery();
+
+  const {
+    data: subCategories,
+    isLoading: subCategoriesLoading,
+    isError: subCategoriesError,
+  } = useGetSubCategoriesQuery();
 
   const handleSubmit = () => {
     if (isLoading) return;
@@ -125,29 +144,40 @@ export default function ProductFormDialog({
             value={category}
             onValueChange={(value) => setCategory(value)}
           >
-            <SelectTrigger>
-              <SelectValue placeholder="Select category" />
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a category" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Clothing">Clothing</SelectItem>
-              <SelectItem value="Accessories">Accessories</SelectItem>
-              <SelectItem value="Footwear">Footwear</SelectItem>
-              <SelectItem value="Bags">Bags</SelectItem>
+              {categories?.data.map((category) => (
+                <SelectItem key={category._id} value={category.name}>
+                  {category.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
 
         <div>
           <Label htmlFor="subCategory">SubCategory</Label>
-          <Input
-            id="subCategory"
-            name="subCategory"
-            type="text"
-            placeholder="Enter sub-category"
-            value={subCategory}
-            onChange={(e) => setSubCategory(e.target.value)}
+          <Select
+            required
             disabled={isLoading}
-          />
+            value={subCategory}
+            onValueChange={(value) => setSubCategory(value)}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a sub-category" />
+            </SelectTrigger>
+            <SelectContent>
+              {subCategories?.data
+                .filter((sub) => sub?.category?.name === category)
+                .map((category) => (
+                  <SelectItem key={category._id} value={category.name}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div>
@@ -231,16 +261,15 @@ export default function ProductFormDialog({
 
         <div>
           <Label htmlFor="images">Images</Label>
-          <textarea
+          <Textarea
             id="images"
             name="images"
             rows="3"
-            className="block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-opacity-50"
             placeholder="Enter image URLs (one per line)"
             value={images}
             onChange={(e) => setImages(e.target.value)}
             disabled={isLoading}
-          ></textarea>
+          ></Textarea>
         </div>
 
         <div className="mt-4">
