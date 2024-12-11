@@ -36,8 +36,8 @@ export default function VerticalProductCard({ product, onClick }) {
                 : product.name}
             </h3>
             <div className="flex items-center gap-2">
-              <Badge>{product.category}</Badge>
-              <Badge variant="secondary">{product.subCategory}</Badge>
+              <Badge>{product?.category?.name}</Badge>
+              <Badge variant="secondary">{product?.subCategory?.name}</Badge>
             </div>
           </div>
           <p className="text-sm text-gray-500 line-clamp-3 h-10">

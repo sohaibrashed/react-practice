@@ -11,7 +11,14 @@ import {
   Tooltip,
   Cell,
 } from "recharts";
-import { Table } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   ShoppingCart,
   Package,
@@ -21,6 +28,9 @@ import {
 } from "lucide-react";
 import { useGetDashboardDataQuery } from "@/services/dashboardApi";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
+import RevenueSalesTrends from "@/components/admin/RevenueSalesTrends";
+import TopSellingChart from "@/components/admin/TopSellingChart";
+import OrdersByStatusChart from "@/components/admin/OrderByStatusChart";
 
 const COLORS = ["#4ADE80", "#38BDF8", "#FF7849", "#F87171", "#A78BFA"];
 
@@ -48,7 +58,14 @@ const Dashboard = () => {
     recentOrders = [],
     lowStockProducts = [],
     ordersByStatus = [],
+    revenueTrends = [],
+    orderTrends = [],
+    userGrowthTrends = [],
+    categorySales = [],
+    popularBrands = [],
   } = dashData?.data || {};
+
+  console.log(dashData);
 
   return (
     <div className="flex flex-col md:flex-row">
@@ -117,118 +134,151 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Order Status Breakdown</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <PieChart width={400} height={300}>
-                <Pie
-                  data={ordersByStatus || []}
-                  dataKey="count"
-                  nameKey="_id"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  fill="#8884d8"
-                  label={({ name, percent }) =>
-                    `${name}: ${(percent * 100).toFixed(0)}%`
-                  }
-                >
-                  {ordersByStatus.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </CardContent>
-          </Card>
+        <RevenueSalesTrends
+          orderTrends={orderTrends}
+          revenueTrends={revenueTrends}
+        />
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Top Selling Products</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <BarChart
-                width={400}
-                height={300}
-                data={topSellingProducts || []}
-              >
-                <Bar dataKey="totalSold" fill="#4ADE80" />
-                <Tooltip />
-              </BarChart>
-            </CardContent>
-          </Card>
+        <TopSellingChart
+          data={topSellingProducts}
+          chartType="bar"
+          title="Top Selling Products - Bar Chart"
+        />
+        <TopSellingChart
+          data={topSellingProducts}
+          chartType="pie"
+          title="Top Selling Products - Pie Chart"
+        />
+        <div className="flex items-center gap-4">
+          <div className="flex justify-start items-center">
+            <OrdersByStatusChart
+              data={ordersByStatus}
+              chartType="bar"
+              title="Orders by Status - Bar Chart"
+            />
+          </div>
+          <div className="flex justify-start items-center">
+            <OrdersByStatusChart
+              data={ordersByStatus}
+              chartType="pie"
+              title="Orders by Status - Pie Chart"
+            />
+          </div>
         </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Low Stock Products</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <thead>
-                  <tr>
-                    <th>Product</th>
-                    <th>Stock</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {lowStockProducts?.map((product) => (
-                    <tr key={product._id}>
-                      <td>{product.name}</td>
-                      <td>{product.stock}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Orders</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <thead>
-                  <tr>
-                    <th>User</th>
-                    <th>Total</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentOrders?.map((order) => (
-                    <tr key={order._id}>
-                      <td>{order.user.name}</td>
-                      <td>${order.totalAmount?.toFixed(2)}</td>
-                      <td>{order.orderStatus}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Calendar</CardTitle>
-            <p className="text-gray-400 text-sm">Upcoming events and orders.</p>
-          </CardHeader>
-          <CardContent>
-            <Calendar />
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
 };
 
 export default Dashboard;
+
+// OLD
+// <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+//           <Card>
+//             <CardHeader>
+//               <CardTitle>Order Status Breakdown</CardTitle>
+//             </CardHeader>
+//             <CardContent>
+//               <PieChart width={400} height={300}>
+//                 <Pie
+//                   data={ordersByStatus || []}
+//                   dataKey="count"
+//                   nameKey="_id"
+//                   cx="50%"
+//                   cy="50%"
+//                   outerRadius={100}
+//                   fill="#8884d8"
+//                   label={({ name, percent }) =>
+//                     `${name}: ${(percent * 100).toFixed(0)}%`
+//                   }
+//                 >
+//                   {ordersByStatus.map((entry, index) => (
+//                     <Cell
+//                       key={`cell-${index}`}
+//                       fill={COLORS[index % COLORS.length]}
+//                     />
+//                   ))}
+//                 </Pie>
+//                 <Tooltip />
+//               </PieChart>
+//             </CardContent>
+//           </Card>
+
+//           <Card>
+//             <CardHeader>
+//               <CardTitle>Top Selling Products</CardTitle>
+//             </CardHeader>
+//             <CardContent>
+//               <BarChart
+//                 width={400}
+//                 height={300}
+//                 data={topSellingProducts || []}
+//               >
+//                 <Bar dataKey="totalSold" fill="#4ADE80" />
+//                 <Tooltip />
+//               </BarChart>
+//             </CardContent>
+//           </Card>
+//         </div>
+
+//         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+//           <Card>
+//             <CardHeader>
+//               <CardTitle>Low Stock Products</CardTitle>
+//             </CardHeader>
+//             <CardContent>
+//               <Table>
+//                 <TableHeader>
+//                   <TableRow>
+//                     <TableHead>Product</TableHead>
+//                     <TableHead>Stock</TableHead>
+//                   </TableRow>
+//                 </TableHeader>
+//                 <TableBody>
+//                   {lowStockProducts?.map((product) => (
+//                     <TableRow key={product._id}>
+//                       <TableCell>{product.name}</TableCell>
+//                       <TableCell>{product.stock}</TableCell>
+//                     </TableRow>
+//                   ))}
+//                 </TableBody>
+//               </Table>
+//             </CardContent>
+//           </Card>
+
+//           <Card>
+//             <CardHeader>
+//               <CardTitle>Recent Orders</CardTitle>
+//             </CardHeader>
+//             <CardContent>
+//               <Table>
+//                 <TableHeader>
+//                   <TableRow>
+//                     <TableHead>User</TableHead>
+//                     <TableHead>Total</TableHead>
+//                     <TableHead>Status</TableHead>
+//                   </TableRow>
+//                 </TableHeader>
+//                 <TableBody>
+//                   {recentOrders?.map((order) => (
+//                     <TableRow key={order._id}>
+//                       <TableCell>{order.user.name}</TableCell>
+//                       <TableCell>${order.totalAmount?.toFixed(2)}</TableCell>
+//                       <TableCell>{order.orderStatus}</TableCell>
+//                     </TableRow>
+//                   ))}
+//                 </TableBody>
+//               </Table>
+//             </CardContent>
+//           </Card>
+//         </div>
+
+//         <Card>
+//           <CardHeader>
+//             <CardTitle>Calendar</CardTitle>
+//             <p className="text-gray-400 text-sm">Upcoming events and orders.</p>
+//           </CardHeader>
+//           <CardContent>
+//             <Calendar />
+//           </CardContent>
+//         </Card>

@@ -9,14 +9,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Trash } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import AddToCart from "@/components/AddToCart";
 import { useCreateOrderMutation } from "@/services/ordersApi";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { saveAddress } from "@/services/addressSlice";
-import { resetCart } from "@/services/cartSlice";
+import { removeFromCart, resetCart } from "@/services/cartSlice";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { useToast } from "@/hooks/use-toast";
 
@@ -74,6 +74,11 @@ export default function Checkout() {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleDelete = (e, item) => {
+    e.stopPropagation();
+    dispatch(removeFromCart(item));
   };
 
   if (isError) {
@@ -143,7 +148,15 @@ export default function Checkout() {
                         <p className="text-sm text-gray-500">
                           {item.quantity} x {item.price}
                         </p>
-                        <AddToCart item={item} />
+                        <div className="flex items-center gap-2">
+                          <AddToCart item={item} />
+                          <Button
+                            variant="ghost"
+                            onClick={(e) => handleDelete(e, item)}
+                          >
+                            <Trash size={18} className="stroke-red-500" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
                     <div className="text-right">

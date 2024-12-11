@@ -1,10 +1,8 @@
 import { useGetOrderQuery } from "@/services/ordersApi";
-import { useNavigate, useParams } from "react-router";
+import { Link, useNavigate } from "react-router";
 import LoadingSpinner from "./ui/loadingSpinner";
-import { Button } from "./ui/button";
 
-export default function OrderDetails() {
-  const { id } = useParams();
+export default function OrderDetails({ id }) {
   const navigate = useNavigate();
 
   const { data: orderDetails, isLoading, isError } = useGetOrderQuery(id);
@@ -24,10 +22,7 @@ export default function OrderDetails() {
   const order = orderDetails?.data;
 
   return (
-    <div className="container mx-auto p-4 sm:p-6 md:p-8">
-      <Button variant="outline" onClick={() => navigate(-1)} className="mb-6">
-        &larr; Back
-      </Button>
+    <div className="container mx-auto p-4 sm:p-6 md:p-8 overflow-y-auto">
       <div className="bg-white shadow-md rounded-lg p-6">
         <div className="mb-6 border-b pb-4">
           <h1 className="text-2xl font-semibold text-gray-800">
@@ -39,7 +34,7 @@ export default function OrderDetails() {
         </div>
 
         <div className="mb-6">
-          <h2 className="text-lg font-medium text-gray-800">
+          <h2 className="text-lg font-bold text-gray-800">
             Customer Information
           </h2>
           <div className="mt-2 text-sm text-gray-600">
@@ -56,7 +51,7 @@ export default function OrderDetails() {
         </div>
 
         <div className="mb-6">
-          <h2 className="text-lg font-medium text-gray-800">Order Items</h2>
+          <h2 className="text-lg font-bold text-gray-800">Order Items</h2>
           <div className="mt-4 overflow-x-auto">
             <table className="min-w-full text-sm text-left text-gray-600">
               <thead className="bg-gray-100 text-gray-800 uppercase">
@@ -71,13 +66,17 @@ export default function OrderDetails() {
                 {order.items.map((item, i) => (
                   <tr
                     key={item?.product?._id || i}
-                    className="border-b cursor-pointer hover:bg-slate-100"
-                    onClick={() =>
-                      navigate(`/admin/products/${item?.product?._id}`)
-                    }
+                    className="border-b hover:bg-slate-100"
                   >
                     <td className="px-4 py-2">
-                      {item?.product?.name || "-------"}
+                      <Link
+                        to={`/product/${item?.product?._id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline hover:text-blue-800"
+                      >
+                        {item?.product?.name || "-------"}
+                      </Link>
                     </td>
                     <td className="px-4 py-2">${item?.price.toFixed(2)}</td>
                     <td className="px-4 py-2">{item?.quantity}</td>
@@ -92,9 +91,7 @@ export default function OrderDetails() {
         </div>
 
         <div className="mb-6">
-          <h2 className="text-lg font-medium text-gray-800">
-            Shipping Address
-          </h2>
+          <h2 className="text-lg font-bold text-gray-800">Shipping Address</h2>
           <div className="mt-2 text-sm text-gray-600">
             <p>
               <span className="font-semibold">Name:</span>{" "}
@@ -124,7 +121,7 @@ export default function OrderDetails() {
         </div>
 
         <div className="mb-6">
-          <h2 className="text-lg font-medium text-gray-800">Order Summary</h2>
+          <h2 className="text-lg font-bold text-gray-800">Order Summary</h2>
           <div className="mt-2 text-sm text-gray-600">
             <p>
               <span className="font-semibold">Payment Method:</span>{" "}
