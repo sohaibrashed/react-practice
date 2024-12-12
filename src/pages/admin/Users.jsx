@@ -27,11 +27,7 @@ export default function Users() {
 
   const [
     createUser,
-    {
-      isLoading: createLoading,
-      isError: createError,
-      isSuccess: createSuccess,
-    },
+    { isLoading: createLoading, error: createError, isSuccess: createSuccess },
   ] = useCreateUserMutation();
 
   const [
@@ -110,7 +106,7 @@ export default function Users() {
       if (createLoading) return;
 
       await createUser(data);
-      if (createError) throw Error;
+      if (createError) throw new Error(createError);
       if (createSuccess) {
         toast({
           title: "User created successfully.",
@@ -118,7 +114,8 @@ export default function Users() {
         setDialogOpen(false);
       }
     } catch (error) {
-      // console.log(error);
+      console.log(...error.message);
+
       toast({
         variant: "destructive",
         title: "An error occurred during creating user.",
@@ -145,7 +142,7 @@ export default function Users() {
               disabled={createLoading}
             >
               <CirclePlus />
-              <span>Create</span>
+              <span>Add</span>
             </Button>
           </DialogTrigger>
           <UserFormDialog

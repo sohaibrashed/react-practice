@@ -20,6 +20,8 @@ import { Dialog, DialogTrigger } from "../ui/dialog";
 import { Drawer, DrawerContent } from "../ui/drawer";
 import { useState } from "react";
 import OrderDetails from "../OrderDetails";
+import { AlertDialog, AlertDialogTrigger } from "../ui/alert-dialog";
+import AlertMessage from "../AlertMessage";
 
 export default function OrderTable({
   orders,
@@ -132,14 +134,21 @@ export default function OrderTable({
                           />
                         </Dialog>
                       </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="text-red-600"
-                        onClick={() => handleDeleteOrder(order._id)}
-                      >
-                        <Button variant="ghost" className="font-normal w-full">
-                          <Trash />
-                          Delete
-                        </Button>
+                      <DropdownMenuItem asChild className="text-red-600">
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              className="font-normal w-full hover:bg-red-100 hover:text-red-600"
+                            >
+                              <Trash />
+                              Delete
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertMessage
+                            handleAction={() => handleDeleteOrder(order._id)}
+                          />
+                        </AlertDialog>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

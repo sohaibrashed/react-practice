@@ -47,7 +47,7 @@ export default function SingleUser({ id }) {
             <UserCheck2 />
             <h1 className="text-2xl font-bold text-gray-800">User Details</h1>
           </div>
-          <div className="space-y-4 overflow-scroll">
+          <div className="space-y-4 overflow-y-auto">
             {/* <div className="flex items-center justify-between">
               <span className="text-gray-600 font-medium">User ID:</span>
               <span className="text-gray-800 font-semibold">{user._id}</span>
@@ -66,11 +66,6 @@ export default function SingleUser({ id }) {
             </div>
           </div>
         </div>
-        <DrawerFooter>
-          <DrawerClose asChild>
-            <Button>Close</Button>
-          </DrawerClose>
-        </DrawerFooter>
       </div>
     </DrawerContent>
   );

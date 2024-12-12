@@ -20,6 +20,8 @@ import ProdcutFormDialog from "./ProductFormDialog";
 import { useState } from "react";
 import { Drawer, DrawerContent } from "../ui/drawer";
 import ProductDetails from "../ProductDetails";
+import AlertMessage from "../AlertMessage";
+import { AlertDialog, AlertDialogTrigger } from "../ui/alert-dialog";
 
 export default function ProductTable({
   products,
@@ -148,14 +150,23 @@ export default function ProductTable({
                           />
                         </Dialog>
                       </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="text-red-600"
-                        onClick={() => handleDeleteProduct(product._id)}
-                      >
-                        <Button variant="ghost" className="font-normal w-full">
-                          <Trash />
-                          Delete
-                        </Button>
+                      <DropdownMenuItem asChild className="text-red-600">
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              className="font-normal w-full hover:bg-red-100 hover:text-red-600"
+                            >
+                              <Trash />
+                              Delete
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertMessage
+                            handleAction={() =>
+                              handleDeleteProduct(product._id)
+                            }
+                          />
+                        </AlertDialog>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

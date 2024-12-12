@@ -16,6 +16,9 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import LoadingSpinner from "../ui/loadingSpinner";
+import useFormValidation from "@/hooks/useFormValidation";
+import { userAddSchema, userUpdateSchema } from "@/validationSchemas/user";
+import FormError from "../FormError";
 
 export default function UserFormDialog({
   onSubmit,
@@ -23,35 +26,63 @@ export default function UserFormDialog({
   isEdit = false,
   isLoading = false,
 }) {
-  const [name, setName] = useState(user.name || "");
-  const [email, setEmail] = useState(user.email || "");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState(user.role || "");
+  const userSchema = isEdit ? userUpdateSchema : userAddSchema;
+  const userStates = isEdit
+    ? { name: user.name || "", email: user.email || "", role: user.role || "" }
+    : {
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        role: "",
+      };
 
-  const handleSubmit = () => {
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors },
+  } = useFormValidation(userSchema, userStates);
+
+  const onSubmitForm = (data) => {
     if (isLoading) return;
 
     if (isEdit) {
-      if (!name || !email || !role) return;
-      onSubmit({ name, email, role }, user._id);
+      onSubmit(
+        { name: data.name, email: data.email, role: data.role },
+        user._id
+      );
     } else {
-      if (!name || !email || !role || !password) return;
-
-      onSubmit({ name, email, password, role });
+      onSubmit({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        confirmPassword: data.confirmPassword,
+        role: data.role,
+      });
     }
+
+    reset();
   };
+
+  const selectedRole = watch("role");
 
   return (
     <DialogContent className="sm:max-w-lg">
       <DialogHeader>
-        <DialogTitle>{isEdit ? "Update User" : "Create User"}</DialogTitle>
+        <DialogTitle>{isEdit ? "Update User" : "Add User"}</DialogTitle>
         <DialogDescription>
           {isEdit
             ? "Update the details of the existing user."
-            : "Fill in the details to create a new user."}
+            : "Fill in the details to add a new user."}
         </DialogDescription>
       </DialogHeader>
-      <div className="space-y-4 max-h-[70vh] overflow-y-auto px-2">
+      <form
+        onSubmit={handleSubmit(onSubmitForm)}
+        className="space-y-4 max-h-[70vh] overflow-y-auto px-2"
+      >
         <div>
           <Label htmlFor="fullName">Full Name</Label>
           <Input
@@ -60,10 +91,10 @@ export default function UserFormDialog({
             name="fullName"
             type="text"
             placeholder="Enter full name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
             disabled={isLoading}
+            {...register("name")}
           />
+          {errors.name && <FormError message={errors?.name?.message} />}
         </div>
 
         <div>
@@ -74,26 +105,45 @@ export default function UserFormDialog({
             name="email"
             type="email"
             placeholder="Enter email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             disabled={isLoading}
+            {...register("email")}
           />
+          {errors.email && <FormError message={errors?.email?.message} />}
         </div>
 
         {!isEdit && (
-          <div>
-            <Label htmlFor="password">Password</Label>
-            <Input
-              required={!isEdit}
-              id="password"
-              name="password"
-              type="password"
-              placeholder="Enter password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={isLoading}
-            />
-          </div>
+          <>
+            <div>
+              <Label htmlFor="password">Password</Label>
+              <Input
+                required={!isEdit}
+                id="password"
+                name="password"
+                type="password"
+                placeholder="Enter Password"
+                disabled={isLoading}
+                {...register("password")}
+              />
+              {errors.password && (
+                <FormError message={errors?.password?.message} />
+              )}
+            </div>
+            <div>
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Input
+                required={!isEdit}
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                placeholder="Enter Confirm Password"
+                disabled={isLoading}
+                {...register("confirmPassword")}
+              />
+              {errors.confirmPassword && (
+                <FormError message={errors?.confirmPassword?.message} />
+              )}
+            </div>
+          </>
         )}
 
         <div>
@@ -101,8 +151,8 @@ export default function UserFormDialog({
           <Select
             required={!isEdit}
             disabled={isLoading}
-            value={role}
-            onValueChange={(value) => setRole(value)}
+            onValueChange={(value) => setValue("role", value)}
+            value={selectedRole}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select role" />
@@ -110,21 +160,17 @@ export default function UserFormDialog({
             <SelectContent>
               <SelectItem value="user">User</SelectItem>
               <SelectItem value="admin">Admin</SelectItem>
-              {/* <SelectItem value="owner">Owner</SelectItem> */}
             </SelectContent>
           </Select>
+          {errors.role && <FormError message={errors?.role?.message} />}
         </div>
 
         <div className="mt-4">
-          <Button
-            disabled={isLoading}
-            onClick={handleSubmit}
-            className="w-full"
-          >
-            {isLoading ? <LoadingSpinner /> : isEdit ? "Update" : "Create"}
+          <Button disabled={isLoading} className="w-full">
+            {isLoading ? <LoadingSpinner /> : isEdit ? "Update" : "Add"}
           </Button>
         </div>
-      </div>
+      </form>
     </DialogContent>
   );
 }

@@ -91,7 +91,7 @@ export default function Orders() {
     try {
       if (updateLoading) return;
 
-      console.log(updatedData);
+      // console.log(updatedData);
       await updateOrder({ data: updatedData, id });
 
       if (updateError) throw Error;
@@ -150,7 +150,7 @@ export default function Orders() {
               disabled={createLoading}
             >
               <CirclePlus />
-              <span>Create</span>
+              <span>Add</span>
             </Button>
           </DialogTrigger>
           <OrderFormDialog

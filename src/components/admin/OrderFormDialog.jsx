@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   DialogContent,
   DialogDescription,
@@ -16,6 +15,9 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import LoadingSpinner from "../ui/loadingSpinner";
+import useFormValidation from "@/hooks/useFormValidation";
+import { OrderValidationSchema } from "@/validationSchemas/order";
+import FormError from "../FormError";
 
 export default function OrderFormDialog({
   onSubmit,
@@ -23,51 +25,60 @@ export default function OrderFormDialog({
   isEdit = false,
   isLoading = false,
 }) {
-  const [totalAmount, setTotalAmount] = useState(order.totalAmount || 0);
-  const [paymentMethod, setPaymentMethod] = useState(order.paymentMethod || "");
-  const [paymentStatus, setPaymentStatus] = useState(order.paymentStatus || "");
-  const [orderStatus, setOrderStatus] = useState(order.orderStatus || "");
-  const [fullName, setFullName] = useState(
-    order.shippingAddress?.fullName || ""
-  );
-  const [address, setAddress] = useState(order.shippingAddress?.address || "");
-  const [city, setCity] = useState(order.shippingAddress?.city || "");
-  const [country, setCountry] = useState(order.shippingAddress?.country || "");
-  const [postalCode, setPostalCode] = useState(
-    order.shippingAddress?.postalCode || ""
-  );
-  const [phone, setPhone] = useState(order.shippingAddress?.phone || "");
+  const initialState = isEdit
+    ? {
+        totalAmount: order.totalAmount || 0,
+        paymentMethod: order.paymentMethod || "",
+        paymentStatus: order.paymentStatus || "Pending",
+        orderStatus: order.orderStatus || "Pending",
+        shippingAddress: {
+          fullName: order.shippingAddress?.fullName || "",
+          address: order.shippingAddress?.address || "",
+          city: order.shippingAddress?.city || "",
+          country: order.shippingAddress?.country || "",
+          postalCode: order.shippingAddress?.postalCode || "",
+          phone: order.shippingAddress?.phone || "",
+        },
+      }
+    : {
+        totalAmount: 0,
+        paymentMethod: "",
+        paymentStatus: "Pending",
+        orderStatus: "Pending",
+        shippingAddress: {
+          fullName: "",
+          address: "",
+          city: "",
+          country: "",
+          postalCode: "",
+          phone: "",
+        },
+      };
 
-  const handleSubmit = () => {
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors },
+  } = useFormValidation(OrderValidationSchema, initialState);
+
+  const onSubmitForm = (data) => {
     if (isLoading) return;
 
-    if (
-      !totalAmount ||
-      !paymentMethod ||
-      !paymentStatus ||
-      !orderStatus ||
-      !fullName ||
-      !address ||
-      !city ||
-      !country ||
-      !postalCode ||
-      !phone
-    ) {
-      return;
-    }
-
     const updatedOrder = {
-      totalAmount,
-      paymentMethod,
-      paymentStatus,
-      orderStatus,
+      totalAmount: data.totalAmount,
+      paymentMethod: data.paymentMethod,
+      paymentStatus: data.paymentStatus,
+      orderStatus: data.orderStatus,
       shippingAddress: {
-        fullName,
-        address,
-        city,
-        country,
-        postalCode,
-        phone,
+        fullName: data.shippingAddress?.fullName,
+        address: data.shippingAddress?.address,
+        city: data.shippingAddress?.city,
+        country: data.shippingAddress?.country,
+        postalCode: data.shippingAddress?.postalCode,
+        phone: data.shippingAddress?.phone,
       },
     };
 
@@ -76,31 +87,42 @@ export default function OrderFormDialog({
     } else {
       onSubmit(updatedOrder);
     }
+
+    reset();
   };
+
+  const paymentMethod = watch("paymentMethod");
+  const paymentStatus = watch("paymentStatus");
+  const orderStatus = watch("orderStatus");
 
   return (
     <DialogContent className="sm:max-w-lg">
       <DialogHeader>
-        <DialogTitle>{isEdit ? "Update Order" : "Create Order"}</DialogTitle>
+        <DialogTitle>{isEdit ? "Update Order" : "Add Order"}</DialogTitle>
         <DialogDescription>
           {isEdit
             ? "Update the details of the existing order."
-            : "Fill in the details to create a new order."}
+            : "Fill in the details to add a new order."}
         </DialogDescription>
       </DialogHeader>
-      <div className="space-y-4 max-h-[70vh] overflow-y-auto px-2">
+      <form
+        onSubmit={handleSubmit(onSubmitForm)}
+        className="space-y-4 max-h-[70vh] overflow-y-auto px-2"
+      >
         <div>
           <Label htmlFor="totalAmount">Total Amount</Label>
           <Input
             required
             id="totalAmount"
-            name="totalAmount"
             type="number"
+            step="any"
             placeholder="Enter total amount"
-            value={totalAmount}
-            onChange={(e) => setTotalAmount(Number(e.target.value))}
-            disabled={isLoading}
+            disabled={isLoading || isEdit}
+            {...register("totalAmount")}
           />
+          {errors.totalAmount && (
+            <FormError message={errors?.totalAmount?.message} />
+          )}
         </div>
 
         <div>
@@ -108,8 +130,8 @@ export default function OrderFormDialog({
           <Select
             required
             disabled={isLoading}
+            onValueChange={(value) => setValue("paymentMethod", value)}
             value={paymentMethod}
-            onValueChange={(value) => setPaymentMethod(value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select payment method" />
@@ -121,6 +143,9 @@ export default function OrderFormDialog({
               <SelectItem value="Cash on Delivery">Cash on Delivery</SelectItem>
             </SelectContent>
           </Select>
+          {errors.paymentMethod && (
+            <FormError message={errors?.paymentMethod?.message} />
+          )}
         </div>
 
         <div>
@@ -128,8 +153,8 @@ export default function OrderFormDialog({
           <Select
             required
             disabled={isLoading}
+            onValueChange={(value) => setValue("paymentStatus", value)}
             value={paymentStatus}
-            onValueChange={(value) => setPaymentStatus(value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select payment status" />
@@ -141,6 +166,9 @@ export default function OrderFormDialog({
               <SelectItem value="Refunded">Refunded</SelectItem>
             </SelectContent>
           </Select>
+          {errors.paymentStatus && (
+            <FormError message={errors?.paymentStatus?.message} />
+          )}
         </div>
 
         <div>
@@ -148,8 +176,8 @@ export default function OrderFormDialog({
           <Select
             required
             disabled={isLoading}
+            onValueChange={(value) => setValue("orderStatus", value)}
             value={orderStatus}
-            onValueChange={(value) => setOrderStatus(value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select order status" />
@@ -163,6 +191,9 @@ export default function OrderFormDialog({
               <SelectItem value="Returned">Returned</SelectItem>
             </SelectContent>
           </Select>
+          {errors.orderStatus && (
+            <FormError message={errors?.orderStatus?.message} />
+          )}
         </div>
 
         <div>
@@ -170,13 +201,12 @@ export default function OrderFormDialog({
           <Input
             required
             id="fullName"
-            name="fullName"
             type="text"
             placeholder="Enter customer name"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
             disabled={isLoading}
+            {...register("shippingAddress.fullName")}
           />
+          {errors.fullName && <FormError message={errors?.fullName?.message} />}
         </div>
 
         <div>
@@ -184,13 +214,12 @@ export default function OrderFormDialog({
           <Input
             required
             id="address"
-            name="address"
             type="text"
             placeholder="Enter address"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
             disabled={isLoading}
+            {...register("shippingAddress.address")}
           />
+          {errors.address && <FormError message={errors?.address?.message} />}
         </div>
 
         <div>
@@ -198,13 +227,12 @@ export default function OrderFormDialog({
           <Input
             required
             id="city"
-            name="city"
             type="text"
             placeholder="Enter city"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
             disabled={isLoading}
+            {...register("shippingAddress.city")}
           />
+          {errors.city && <FormError message={errors?.city?.message} />}
         </div>
 
         <div>
@@ -212,13 +240,12 @@ export default function OrderFormDialog({
           <Input
             required
             id="country"
-            name="country"
             type="text"
             placeholder="Enter country"
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
             disabled={isLoading}
+            {...register("shippingAddress.country")}
           />
+          {errors.country && <FormError message={errors?.country?.message} />}
         </div>
 
         <div>
@@ -226,13 +253,14 @@ export default function OrderFormDialog({
           <Input
             required
             id="postalCode"
-            name="postalCode"
             type="text"
             placeholder="Enter postal code"
-            value={postalCode}
-            onChange={(e) => setPostalCode(e.target.value)}
             disabled={isLoading}
+            {...register("shippingAddress.postalCode")}
           />
+          {errors.postalCode && (
+            <FormError message={errors?.postalCode?.message} />
+          )}
         </div>
 
         <div>
@@ -240,25 +268,20 @@ export default function OrderFormDialog({
           <Input
             required
             id="phone"
-            name="phone"
             type="text"
             placeholder="Enter phone number"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
             disabled={isLoading}
+            {...register("shippingAddress.phone")}
           />
+          {errors.phone && <FormError message={errors?.phone?.message} />}
         </div>
 
         <div className="mt-4">
-          <Button
-            disabled={isLoading}
-            onClick={handleSubmit}
-            className="w-full"
-          >
-            {isLoading ? <LoadingSpinner /> : isEdit ? "Update" : "Create"}
+          <Button disabled={isLoading} className="w-full">
+            {isLoading ? <LoadingSpinner /> : isEdit ? "Update" : "Add"}
           </Button>
         </div>
-      </div>
+      </form>
     </DialogContent>
   );
 }

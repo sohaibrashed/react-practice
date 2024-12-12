@@ -20,6 +20,8 @@ import UserFormDialog from "./UserFormDialog";
 import { Dialog, DialogTrigger } from "../ui/dialog";
 import { Drawer } from "../ui/drawer";
 import SingleUser from "@/pages/admin/SingleUser";
+import { AlertDialog, AlertDialogTrigger } from "../ui/alert-dialog";
+import AlertMessage from "../AlertMessage";
 
 export default function UserTable({
   users,
@@ -89,7 +91,7 @@ export default function UserTable({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-32">
-                    <DropdownMenuItem>
+                    <DropdownMenuItem asChild>
                       <Button
                         variant="ghost"
                         className="font-normal w-full flex items-center"
@@ -118,17 +120,21 @@ export default function UserTable({
                         />
                       </Dialog>
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="text-red-600"
-                      onClick={() => handleDeleteUser(user._id)}
-                    >
-                      <Button
-                        variant="ghost"
-                        className="font-normal w-full hover:bg-red-100 hover:text-red-600"
-                      >
-                        <Trash />
-                        Delete
-                      </Button>
+                    <DropdownMenuItem className="text-red-600" asChild>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            className="font-normal w-full hover:bg-red-100 hover:text-red-600"
+                          >
+                            <Trash />
+                            Delete
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertMessage
+                          handleAction={() => handleDeleteUser(user._id)}
+                        />
+                      </AlertDialog>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

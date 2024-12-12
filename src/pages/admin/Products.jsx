@@ -136,8 +136,6 @@ export default function AdminProducts() {
     console.log(error);
   }
 
-  console.log(data);
-
   return (
     <div className="min-h-screen">
       {isError && "Something went wrong"}
@@ -152,7 +150,7 @@ export default function AdminProducts() {
               disabled={createLoading}
             >
               <CirclePlus />
-              <span>Create</span>
+              <span>Add</span>
             </Button>
           </DialogTrigger>
           <ProdcutFormDialog

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   DialogContent,
   DialogDescription,
@@ -21,6 +20,9 @@ import {
   useGetSubCategoriesQuery,
 } from "@/services/categoryApi";
 import { Textarea } from "../ui/textarea";
+import useFormValidation from "@/hooks/useFormValidation";
+import { productValidationSchema } from "@/validationSchemas/product";
+import FormError from "../FormError";
 
 export default function ProductFormDialog({
   onSubmit,
@@ -28,51 +30,43 @@ export default function ProductFormDialog({
   isEdit = false,
   isLoading = false,
 }) {
-  const [name, setName] = useState(product.name || "");
-  const [description, setDescription] = useState(product.description || "");
-  const [price, setPrice] = useState(product.price || "");
-  const [category, setCategory] = useState(product.category?.name || "");
-  const [subCategory, setSubCategory] = useState(
-    product.subCategory?.name || ""
-  );
-  const [size, setSize] = useState(product.size || "");
-  const [color, setColor] = useState(product.color || "");
-  const [material, setMaterial] = useState(product.material || "");
-  const [stock, setStock] = useState(product.stock || "");
-  const [tags, setTags] = useState(product.tags?.join(", ") || "");
-  const [brand, setBrand] = useState(product.brand || "");
-  const [images, setImages] = useState(product.images?.join("\n") || "");
-
   const {
-    data: categories,
-    isLoading: categoriesLoading,
-    isError: categoriesError,
-  } = useGetCategoriesQuery();
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+    reset,
+  } = useFormValidation(productValidationSchema, {
+    name: product.name || "",
+    description: product.description || "",
+    price: product.price || "",
+    category: product.category?.name || "",
+    subCategory: product.subCategory?.name || "",
+    size: product.size || "",
+    color: product.color || "",
+    material: product.material || "",
+    stock: product.stock || "",
+    tags: product.tags?.join("\n") || "",
+    brand: product.brand || "",
+    images: product.images?.join("\n") || "",
+  });
 
-  const {
-    data: subCategories,
-    isLoading: subCategoriesLoading,
-    isError: subCategoriesError,
-  } = useGetSubCategoriesQuery();
+  const { data: categories } = useGetCategoriesQuery();
+  const { data: subCategories } = useGetSubCategoriesQuery();
 
-  const handleSubmit = () => {
+  const category = watch("category");
+  const subCategory = watch("subCategory");
+
+  const onSubmitForm = (formData) => {
     if (isLoading) return;
 
-    if (!name || !price || !category || !stock) return;
-
     const data = {
-      name,
-      description,
-      price: parseFloat(price),
-      category,
-      subCategory,
-      size,
-      color,
-      material,
-      stock: parseInt(stock, 10),
-      tags: tags.split(",").map((tag) => tag.trim()),
-      brand,
-      images: images.split("\n").map((url) => url.trim()),
+      ...formData,
+      price: parseFloat(formData.price),
+      stock: parseInt(formData.stock, 10),
+      tags: formData?.tags.split(",").map((tag) => tag.trim()),
+      images: formData.images?.split("\n").map((url) => url.trim()),
     };
 
     if (isEdit) {
@@ -80,21 +74,24 @@ export default function ProductFormDialog({
     } else {
       onSubmit(data);
     }
+
+    reset();
   };
 
   return (
     <DialogContent className="sm:max-w-lg">
       <DialogHeader>
-        <DialogTitle>
-          {isEdit ? "Update Product" : "Create Product"}
-        </DialogTitle>
+        <DialogTitle>{isEdit ? "Update Product" : "Add Product"}</DialogTitle>
         <DialogDescription>
           {isEdit
             ? "Update the details of the existing product."
-            : "Fill in the details to create a new product."}
+            : "Fill in the details to add a new product."}
         </DialogDescription>
       </DialogHeader>
-      <div className="space-y-4 max-h-[70vh] overflow-y-auto px-2">
+      <form
+        onSubmit={handleSubmit(onSubmitForm)}
+        className="space-y-4 max-h-[70vh] overflow-y-auto px-2"
+      >
         <div>
           <Label htmlFor="name">Name</Label>
           <Input
@@ -103,10 +100,10 @@ export default function ProductFormDialog({
             name="name"
             type="text"
             placeholder="Enter product name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
             disabled={isLoading}
+            {...register("name")}
           />
+          {errors.name && <FormError message={errors?.name?.message} />}
         </div>
 
         <div>
@@ -116,10 +113,12 @@ export default function ProductFormDialog({
             name="description"
             type="text"
             placeholder="Enter product description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
             disabled={isLoading}
+            {...register("description")}
           />
+          {errors.description && (
+            <FormError message={errors?.description?.message} />
+          )}
         </div>
 
         <div>
@@ -129,20 +128,20 @@ export default function ProductFormDialog({
             id="price"
             name="price"
             type="number"
+            step="any"
             placeholder="Enter price"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
             disabled={isLoading}
+            {...register("price")}
           />
+          {errors.price && <FormError message={errors?.name?.message} />}
         </div>
-
         <div>
           <Label htmlFor="category">Category</Label>
           <Select
             required
             disabled={isLoading}
             value={category}
-            onValueChange={(value) => setCategory(value)}
+            onValueChange={(value) => setValue("category", value)}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a category" />
@@ -155,6 +154,7 @@ export default function ProductFormDialog({
               ))}
             </SelectContent>
           </Select>
+          {errors.category && <FormError message={errors.category.message} />}
         </div>
 
         <div>
@@ -163,21 +163,24 @@ export default function ProductFormDialog({
             required
             disabled={isLoading}
             value={subCategory}
-            onValueChange={(value) => setSubCategory(value)}
+            onValueChange={(value) => setValue("subCategory", value)}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a sub-category" />
             </SelectTrigger>
             <SelectContent>
               {subCategories?.data
-                .filter((sub) => sub?.category?.name === category)
-                .map((category) => (
-                  <SelectItem key={category._id} value={category.name}>
-                    {category.name}
+                ?.filter((sub) => sub?.category?.name === category)
+                .map((sub) => (
+                  <SelectItem key={sub._id} value={sub.name}>
+                    {sub.name}
                   </SelectItem>
                 ))}
             </SelectContent>
           </Select>
+          {errors.subCategory && (
+            <FormError message={errors.subCategory.message} />
+          )}
         </div>
 
         <div>
@@ -187,10 +190,10 @@ export default function ProductFormDialog({
             name="size"
             type="text"
             placeholder="Enter size (e.g., S, M, L)"
-            value={size}
-            onChange={(e) => setSize(e.target.value)}
             disabled={isLoading}
+            {...register("size")}
           />
+          {errors.size && <FormError message={errors?.size?.message} />}
         </div>
 
         <div>
@@ -200,10 +203,10 @@ export default function ProductFormDialog({
             name="color"
             type="text"
             placeholder="Enter color"
-            value={color}
-            onChange={(e) => setColor(e.target.value)}
             disabled={isLoading}
+            {...register("color")}
           />
+          {errors.color && <FormError message={errors?.color?.message} />}
         </div>
 
         <div>
@@ -213,24 +216,25 @@ export default function ProductFormDialog({
             name="material"
             type="text"
             placeholder="Enter material (e.g., Cotton, Wool)"
-            value={material}
-            onChange={(e) => setMaterial(e.target.value)}
             disabled={isLoading}
+            {...register("material")}
           />
+          {errors.material && <FormError message={errors?.material?.message} />}
         </div>
 
         <div>
           <Label htmlFor="stock">Stock</Label>
           <Input
+            className="appearance-none"
             required
             id="stock"
             name="stock"
             type="number"
             placeholder="Enter stock quantity"
-            value={stock}
-            onChange={(e) => setStock(e.target.value)}
             disabled={isLoading}
+            {...register("stock")}
           />
+          {errors.stock && <FormError message={errors?.stock?.message} />}
         </div>
 
         <div>
@@ -240,10 +244,10 @@ export default function ProductFormDialog({
             name="tags"
             type="text"
             placeholder="Enter tags (comma-separated)"
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
             disabled={isLoading}
+            {...register("tags")}
           />
+          {errors.tags && <FormError message={errors?.tags?.message} />}
         </div>
 
         <div>
@@ -253,10 +257,10 @@ export default function ProductFormDialog({
             name="brand"
             type="text"
             placeholder="Enter brand"
-            value={brand}
-            onChange={(e) => setBrand(e.target.value)}
             disabled={isLoading}
+            {...register("brand")}
           />
+          {errors.brand && <FormError message={errors?.brand?.message} />}
         </div>
 
         <div>
@@ -266,22 +270,18 @@ export default function ProductFormDialog({
             name="images"
             rows="3"
             placeholder="Enter image URLs (one per line)"
-            value={images}
-            onChange={(e) => setImages(e.target.value)}
             disabled={isLoading}
+            {...register("images")}
           ></Textarea>
+          {errors.images && <FormError message={errors?.images?.message} />}
         </div>
 
         <div className="mt-4">
-          <Button
-            disabled={isLoading}
-            onClick={handleSubmit}
-            className="w-full"
-          >
-            {isLoading ? <LoadingSpinner /> : isEdit ? "Update" : "Create"}
+          <Button disabled={isLoading} className="w-full">
+            {isLoading ? <LoadingSpinner /> : isEdit ? "Update" : "Add"}
           </Button>
         </div>
-      </div>
+      </form>
     </DialogContent>
   );
 }

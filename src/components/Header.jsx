@@ -28,6 +28,10 @@ import { logout } from "@/services/authSlice";
 import Navbar from "./NavBar";
 import CartDrawer from "./CartDrawer";
 import { resetCart } from "@/services/cartSlice";
+import {
+  useGetCategoriesQuery,
+  useGetSubCategoriesQuery,
+} from "@/services/categoryApi";
 
 export default function Header() {
   const { userInfo } = useSelector((state) => state.auth);
@@ -38,6 +42,10 @@ export default function Header() {
   const { toast } = useToast();
 
   const [signout, { isLoading, isError }] = useSignoutMutation();
+  const { data: categories, isLoading: loadingCategory } =
+    useGetCategoriesQuery();
+  const { data: subCategories, isLoading: loadingSubCategory } =
+    useGetSubCategoriesQuery();
 
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
@@ -60,7 +68,6 @@ export default function Header() {
       title: "An error occurred during sign out.",
     });
   }
-
   return (
     <header className="bg-white shadow-md sticky top-0 z-50 ">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
@@ -68,7 +75,11 @@ export default function Header() {
           <Link to="/">Clothify</Link>
         </h4>
 
-        <Navbar />
+        <Navbar
+          categories={categories?.data}
+          subCategories={subCategories?.data}
+          isLoading={loadingCategory || loadingSubCategory}
+        />
 
         <div className="hidden lg:flex items-center space-x-2">
           <Input type="text" placeholder="Search..." className="w-72" />
