@@ -15,8 +15,6 @@ export default function Navbar({
   subCategories = [],
   isLoading = false,
 }) {
-  console.log(categories, subCategories);
-
   return (
     <NavigationMenu>
       <NavigationMenuList className="hidden md:flex space-x-6">
@@ -54,7 +52,7 @@ export default function Navbar({
                           <li key={subcategory._id}>
                             <NavigationMenuLink className="text-slate-600 hover:underline">
                               <Link
-                                to={`/category/${category.name.toLowerCase()}/${subcategory.name.toLowerCase()}`}
+                                to={`/shop?category=${category.name.toLowerCase()}&subcategory=${subcategory.name.toLowerCase()}`}
                               >
                                 {subcategory.name}
                               </Link>

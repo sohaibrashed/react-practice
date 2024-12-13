@@ -7,8 +7,10 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { useNavigate } from "react-router";
 
 export default function HeroSection() {
+  const navigate = useNavigate();
   return (
     <section className="relative bg-gray-100">
       <div className="container mx-auto px-4 lg:px-8 py-16 lg:py-24 grid grid-cols-1 lg:grid-cols-2 items-center gap-8">
@@ -25,6 +27,7 @@ export default function HeroSection() {
             <Button
               size="lg"
               className="bg-pink-600 hover:bg-pink-700 text-white"
+              onClick={() => navigate("/shop")}
             >
               Shop Now
             </Button>
@@ -32,6 +35,7 @@ export default function HeroSection() {
               size="lg"
               variant="outline"
               className="border-gray-300 text-gray-700 hover:text-gray-900"
+              onClick={() => navigate("/about")}
             >
               Learn More
             </Button>

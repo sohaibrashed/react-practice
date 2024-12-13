@@ -5,7 +5,7 @@ import AdminLayout from "./layouts/AdminLayout";
 import Home from "./pages/Home";
 import ContactUs from "./pages/ContactUs";
 import AboutUs from "./pages/AboutUs";
-import Products from "./pages/Products";
+import Shop from "./pages/Shop";
 import Account from "./pages/Account";
 import Private from "./routes/Private";
 import Profile from "./pages/Profile";
@@ -31,11 +31,8 @@ export default function App() {
             <Route path="/" index element={<Home />} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/about" element={<AboutUs />} />
-            <Route
-              path="/products/category/:type/:subCategory?"
-              element={<Products />}
-            />
-            <Route path="/products/search/:keyword" element={<Products />} />
+
+            <Route path="/shop" element={<Shop />} />
             <Route path="/account/:type?" element={<Account />} />
             <Route path="/product/:id" element={<Product />} />
 

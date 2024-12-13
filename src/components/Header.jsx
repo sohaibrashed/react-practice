@@ -81,26 +81,16 @@ export default function Header() {
           isLoading={loadingCategory || loadingSubCategory}
         />
 
-        <div className="hidden lg:flex items-center space-x-2">
-          <Input type="text" placeholder="Search..." className="w-72" />
-          <Button>
-            <Search size={20} />
-          </Button>
-        </div>
-
         <div className="flex items-center space-x-4">
           <Sheet>
             <SheetTrigger asChild>
-              <button title="Search" className="lg:hidden hover:text-gray-700">
+              <button title="Search" className="hover:text-gray-700">
                 <Search size={20} />
               </button>
             </SheetTrigger>
-            <SheetContent side="top" className="p-4">
-              <div className="flex items-center space-x-2">
-                <Input type="text" placeholder="Search..." className="w-full" />
-                <Button>
-                  <Search size={20} />
-                </Button>
+            <SheetContent side="top" className="p-4 bg-transparent border-none">
+              <div className="flex justify-center items-center">
+                <Input type="text" placeholder="Search..." className="w-2/3" />
               </div>
             </SheetContent>
           </Sheet>
