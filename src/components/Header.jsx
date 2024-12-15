@@ -1,7 +1,5 @@
-import { Link, NavLink, useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Menu,
@@ -28,10 +26,8 @@ import { logout } from "@/services/authSlice";
 import Navbar from "./NavBar";
 import CartDrawer from "./CartDrawer";
 import { resetCart } from "@/services/cartSlice";
-import {
-  useGetCategoriesQuery,
-  useGetSubCategoriesQuery,
-} from "@/services/categoryApi";
+import MobileNavbar from "./MobileNavbar";
+import SearchSuggestions from "./SearchSuggestions";
 
 export default function Header() {
   const { userInfo } = useSelector((state) => state.auth);
@@ -42,10 +38,6 @@ export default function Header() {
   const { toast } = useToast();
 
   const [signout, { isLoading, isError }] = useSignoutMutation();
-  const { data: categories, isLoading: loadingCategory } =
-    useGetCategoriesQuery();
-  const { data: subCategories, isLoading: loadingSubCategory } =
-    useGetSubCategoriesQuery();
 
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
@@ -75,25 +67,10 @@ export default function Header() {
           <Link to="/">Clothify</Link>
         </h4>
 
-        <Navbar
-          categories={categories?.data}
-          subCategories={subCategories?.data}
-          isLoading={loadingCategory || loadingSubCategory}
-        />
+        <Navbar />
 
         <div className="flex items-center space-x-4">
-          <Sheet>
-            <SheetTrigger asChild>
-              <button title="Search" className="hover:text-gray-700">
-                <Search size={20} />
-              </button>
-            </SheetTrigger>
-            <SheetContent side="top" className="p-4 bg-transparent border-none">
-              <div className="flex justify-center items-center">
-                <Input type="text" placeholder="Search..." className="w-2/3" />
-              </div>
-            </SheetContent>
-          </Sheet>
+          <SearchSuggestions />
 
           <Sheet>
             <SheetTrigger>
@@ -162,42 +139,8 @@ export default function Header() {
                 <Menu size={20} />
               </button>
             </SheetTrigger>
-            <SheetContent side="left">
-              <div className="flex flex-col space-y-4 p-4">
-                <NavLink
-                  to="/"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "hover:text-gray-700 border-b-2 border-slate-300"
-                      : "hover:text-gray-700"
-                  }
-                >
-                  Home
-                </NavLink>
-                <Link to="/categories" className="hover:text-gray-700">
-                  Categories
-                </Link>
-                <NavLink
-                  to="/contact"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "hover:text-gray-700 border-b-2 border-slate-300"
-                      : "hover:text-gray-700"
-                  }
-                >
-                  Contact us
-                </NavLink>
-                <NavLink
-                  to="/about"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "hover:text-gray-700 border-b-2 border-slate-300"
-                      : "hover:text-gray-700"
-                  }
-                >
-                  About us
-                </NavLink>
-              </div>
+            <SheetContent side="left" className={"overflow-y-auto"}>
+              <MobileNavbar />
             </SheetContent>
           </Sheet>
         </div>

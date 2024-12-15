@@ -12,14 +12,20 @@ import {
   useUpdateUserMutation,
 } from "@/services/usersApi";
 import { CirclePlus, Search } from "lucide-react";
-import { useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import Paginate from "@/components/Paginate";
 import { Input } from "@/components/ui/input";
+import ReusableDataTable from "@/components/admin/ReusableDataTable";
+import SingleUser from "./SingleUser";
+import DynamicForm from "@/components/admin/DynamicForm";
+import { userTableConfig } from "@/utils/tableConfig";
+import { userFormConfig, userUpdateFormConfig } from "@/utils/formConfig";
 
 export default function Users() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isDialogOpen, setDialogOpen] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const filters = Object.fromEntries(searchParams.entries());
 
@@ -85,7 +91,7 @@ export default function Users() {
       if (updateLoading) return;
 
       await updateUser({ data: updatedData, id });
-      if (updateError) throw Error;
+
       if (updateSuccess) {
         toast({
           title: "User updated successfully.",
@@ -93,7 +99,6 @@ export default function Users() {
         setDialogOpen(false);
       }
     } catch (error) {
-      // console.log(error);
       toast({
         variant: "destructive",
         title: "An error occurred during updating user.",
@@ -111,8 +116,8 @@ export default function Users() {
         toast({
           title: "User created successfully.",
         });
-        setDialogOpen(false);
       }
+      setDialogOpen(false);
     } catch (error) {
       console.log(...error.message);
 
@@ -145,9 +150,12 @@ export default function Users() {
               <span>Add</span>
             </Button>
           </DialogTrigger>
-          <UserFormDialog
+
+          <DynamicForm
+            formConfig={userFormConfig}
             onSubmit={handleUserCreation}
             isLoading={createLoading}
+            isEdit={false}
           />
         </Dialog>
       </div>
@@ -161,12 +169,25 @@ export default function Users() {
         />
         <Search className="absolute right-3 text-gray-400" size={20} />
       </div>
-      <UserTable
+      {/* <UserTable
         users={users?.data}
         onUpdateUser={handleUserUpdate}
         handleDeleteUser={handleUserDelete}
         isLoading={updateLoading || deleteLoading || false}
+      /> */}
+
+      <ReusableDataTable
+        data={users?.data}
+        columns={userTableConfig}
+        onView={(id) => console.log("Viewing", id)}
+        onEdit={(user, id) => handleUserUpdate(user, id)}
+        onDelete={(id) => handleUserDelete(id)}
+        ViewComponent={SingleUser}
+        EditFormComponent={DynamicForm}
+        formConfig={userUpdateFormConfig}
+        caption="A list of registered users."
       />
+
       <div className="mt-4">
         <Paginate
           currentPage={users?.pagination?.currentPage}

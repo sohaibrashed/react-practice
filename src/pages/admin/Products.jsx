@@ -4,7 +4,7 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { useToast } from "@/hooks/use-toast";
 import { CirclePlus, Search } from "lucide-react";
-import ProdcutFormDialog from "@/components/admin/ProductFormDialog";
+import ProductFormDialog from "@/components/admin/ProductFormDialog";
 import ProductTable from "@/components/admin/ProductTable";
 import {
   useCreateProductMutation,
@@ -15,6 +15,11 @@ import {
 import Paginate from "@/components/Paginate";
 import { useSearchParams } from "react-router";
 import { Input } from "@/components/ui/input";
+import ReusableDataTable from "@/components/admin/ReusableDataTable";
+import { productTableConfig } from "@/utils/tableConfig";
+import ProductDetails from "@/components/ProductDetails";
+import DynamicForm from "@/components/admin/DynamicForm";
+import { productFormConfig } from "@/utils/formConfig";
 
 export default function AdminProducts() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -153,7 +158,7 @@ export default function AdminProducts() {
               <span>Add</span>
             </Button>
           </DialogTrigger>
-          <ProdcutFormDialog
+          <ProductFormDialog
             onSubmit={handleProductCreation}
             isLoading={createLoading}
           />
@@ -170,11 +175,22 @@ export default function AdminProducts() {
         <Search className="absolute right-3 text-gray-400" size={20} />
       </div>
 
-      <ProductTable
+      {/* <ProductTable
         products={data?.products}
         onUpdateProduct={handleProductUpdate}
         handleDeleteProduct={handleProductDelete}
         isLoading={updateLoading || deleteLoading || false}
+      /> */}
+      <ReusableDataTable
+        data={data?.products}
+        columns={productTableConfig}
+        onView={(id) => console.log("Viewing", id)}
+        onEdit={(product) => handleProductUpdate(product)}
+        onDelete={(id) => handleProductDelete(id)}
+        ViewComponent={ProductDetails}
+        EditFormComponent={DynamicForm}
+        formConfig={productFormConfig}
+        caption="A list of registered products."
       />
 
       <div className="mt-4">

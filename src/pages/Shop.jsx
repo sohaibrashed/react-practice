@@ -1,11 +1,20 @@
-import React from "react";
 import MinimalistProductCard from "@/components/MinimalistProductCard";
+import Paginate from "@/components/Paginate";
 import ShopFilterSidebar from "@/components/ShopFilterSidebar";
+import TrendingProducts from "@/components/TrendingProducts";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { useGetProductsQuery } from "@/services/productsApi";
+import { useSearchParams } from "react-router";
 
 export default function Shop() {
-  const { data, isLoading, isError } = useGetProductsQuery();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const filters = Object.fromEntries(searchParams.entries());
+
+  const { data, isLoading, isError } = useGetProductsQuery(filters);
+
+  const handlePageChange = (page) => {
+    setSearchParams({ page });
+  };
 
   if (isLoading) {
     return (
@@ -67,6 +76,14 @@ export default function Shop() {
           )}
         </div>
       </div>
+      <div className="pb-4 border-b-2">
+        <Paginate
+          currentPage={data?.pagination?.currentPage}
+          totalPages={data?.pagination?.totalPages}
+          onPageChange={(page) => handlePageChange(page)}
+        />
+      </div>
+      <TrendingProducts />
     </>
   );
 }

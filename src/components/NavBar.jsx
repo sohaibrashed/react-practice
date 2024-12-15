@@ -1,4 +1,4 @@
-import LoadingSpinner from "./ui/loadingSpinner";
+import CategoryAccordion from "./CategoryAccordion";
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -8,13 +8,9 @@ import {
   NavigationMenuLink,
   navigationMenuTriggerStyle,
 } from "./ui/navigation-menu";
-import { Link, NavLink } from "react-router";
+import { NavLink } from "react-router";
 
-export default function Navbar({
-  categories = [],
-  subCategories = [],
-  isLoading = false,
-}) {
+export default function Navbar() {
   return (
     <NavigationMenu>
       <NavigationMenuList className="hidden md:flex space-x-6">
@@ -33,37 +29,12 @@ export default function Navbar({
 
         <NavigationMenuItem>
           <NavigationMenuTrigger>Categories</NavigationMenuTrigger>
-          <NavigationMenuContent className="bg-white shadow-lg rounded-lg p-4 w-full max-w-3xl">
-            {isLoading ? (
-              <div className="flex items-center justify-center">
-                <LoadingSpinner />
-              </div>
-            ) : (
-              <div className="grid h-96 w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] scroll-smooth overflow-y-auto">
-                {categories.map((category) => (
-                  <div key={category._id} className="w-1/4 min-w-[150px]">
-                    <h5 className="text-slate-700 font-semibold mb-2">
-                      {category.name}
-                    </h5>
-                    <ul className="space-y-1">
-                      {subCategories
-                        .filter((sub) => sub?.category?._id === category._id)
-                        .map((subcategory) => (
-                          <li key={subcategory._id}>
-                            <NavigationMenuLink className="text-slate-600 hover:underline">
-                              <Link
-                                to={`/shop?category=${category.name.toLowerCase()}&subcategory=${subcategory.name.toLowerCase()}`}
-                              >
-                                {subcategory.name}
-                              </Link>
-                            </NavigationMenuLink>
-                          </li>
-                        ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            )}
+          <NavigationMenuContent className="bg-white shadow-lg p-4 w-full max-w-3xl">
+            <CategoryAccordion
+              className={
+                "grid gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] scroll-smooth overflow-y-auto"
+              }
+            />
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>

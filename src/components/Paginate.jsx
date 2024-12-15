@@ -7,9 +7,16 @@ import {
   PaginationPrevious,
   PaginationEllipsis,
 } from "./ui/pagination";
+import { useSearchParams } from "react-router";
 
 export default function Paginate({ currentPage, totalPages, onPageChange }) {
-  const handleRoute = (page) => `?page=${page}`;
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const handleRoute = (page) => {
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.set("page", page);
+    return `?${newParams.toString()}`;
+  };
 
   const renderPaginationItems = () => {
     const paginationItems = [];
@@ -80,23 +87,29 @@ export default function Paginate({ currentPage, totalPages, onPageChange }) {
   return (
     <Pagination>
       <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious
-            to={currentPage > 1 ? handleRoute(currentPage - 1) : "#"}
-            onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
-          />
-        </PaginationItem>
+        {currentPage > 1 && (
+          <PaginationItem>
+            <PaginationPrevious
+              to={currentPage > 1 ? handleRoute(currentPage - 1) : "#"}
+              disabled={currentPage <= 1}
+              onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
+            />
+          </PaginationItem>
+        )}
 
         {renderPaginationItems()}
 
-        <PaginationItem>
-          <PaginationNext
-            to={currentPage < totalPages ? handleRoute(currentPage + 1) : "#"}
-            onClick={() =>
-              currentPage < totalPages && onPageChange(currentPage + 1)
-            }
-          />
-        </PaginationItem>
+        {currentPage < totalPages && (
+          <PaginationItem>
+            <PaginationNext
+              to={currentPage < totalPages ? handleRoute(currentPage + 1) : "#"}
+              disabled={currentPage >= totalPages}
+              onClick={() =>
+                currentPage < totalPages && onPageChange(currentPage + 1)
+              }
+            />
+          </PaginationItem>
+        )}
       </PaginationContent>
     </Pagination>
   );

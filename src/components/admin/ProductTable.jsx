@@ -16,7 +16,7 @@ import {
 import { Button } from "../ui/button";
 import { EllipsisVertical, Pencil, Trash, View } from "lucide-react";
 import { Dialog, DialogTrigger } from "../ui/dialog";
-import ProdcutFormDialog from "./ProductFormDialog";
+import ProductFormDialog from "./ProductFormDialog";
 import { useState } from "react";
 import { Drawer, DrawerContent } from "../ui/drawer";
 import ProductDetails from "../ProductDetails";
@@ -142,7 +142,7 @@ export default function ProductTable({
                               Update
                             </Button>
                           </DialogTrigger>
-                          <ProdcutFormDialog
+                          <ProductFormDialog
                             isEdit
                             product={product}
                             onSubmit={handleFormSubmit}

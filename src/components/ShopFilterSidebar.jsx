@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -15,10 +15,38 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { Filter, X } from "lucide-react";
+import { Filter } from "lucide-react";
+import CategoryAccordion from "./CategoryAccordion";
+import { useSearchParams } from "react-router";
+import ActiveFilters from "./ActiveFilters";
+
+const sortOptions = [
+  { id: "a-z", label: "Alphabetically, A-Z" },
+  { id: "z-a", label: "Alphabetically, Z-A" },
+  { id: "low-high", label: "Price, low to high" },
+  { id: "high-low", label: "Price, high to low" },
+  { id: "new-old", label: "Date, new to old" },
+  { id: "old-new", label: "Date, old to new" },
+];
 
 export default function ShopFilterSidebar() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+
+  const handleCheckboxChange = (paramKey, value) => {
+    const currentValues = searchParams.getAll(paramKey);
+
+    if (currentValues.includes(value)) {
+      searchParams.delete(paramKey);
+      currentValues
+        .filter((v) => v !== value)
+        .forEach((v) => searchParams.append(paramKey, v));
+    } else {
+      searchParams.append(paramKey, value);
+    }
+
+    setSearchParams(searchParams);
+  };
 
   const FilterContent = () => (
     <div className="space-y-6 p-4">
@@ -26,9 +54,9 @@ export default function ShopFilterSidebar() {
         <AccordionItem value="categories">
           <AccordionTrigger>Categories</AccordionTrigger>
           <AccordionContent>
-            <div className="space-y-2">
-              <p>coming soon</p>
-            </div>
+            <CategoryAccordion
+              className={"grid gap-3 p-4 scroll-smooth overflow-y-auto"}
+            />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -39,30 +67,25 @@ export default function ShopFilterSidebar() {
           <AccordionContent
             className={"flex flex-col justify-start items-start gap-2"}
           >
-            <div className="flex space-x-2">
-              <Checkbox id="a-z" />
-              <label className="text-slate-700">Alphabetically, A-Z</label>
-            </div>
-            <div className="flex space-x-2">
-              <Checkbox id="z-a" />
-              <label className="text-slate-700">Alphabetically, Z-A</label>
-            </div>
-            <div className="flex space-x-2">
-              <Checkbox id="low-to-high" />
-              <label className="text-slate-700">Price, low to high</label>
-            </div>
-            <div className="flex space-x-2">
-              <Checkbox id="high-to-low" />
-              <label className="text-slate-700">Price, high to low</label>
-            </div>
-            <div className="flex space-x-2">
-              <Checkbox id="new-to-old" />
-              <label className="text-slate-700">Date, new to old</label>
-            </div>
-            <div className="flex space-x-2">
-              <Checkbox id="old-to-new" />
-              <label className="text-slate-700">Date, old to new</label>
-            </div>
+            {sortOptions.map((option) => (
+              <div key={option.id} className="flex space-x-2">
+                <Checkbox
+                  id={option.id}
+                  checked={searchParams.get("sort") === option.id}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      searchParams.set("sort", option.id);
+                    } else {
+                      searchParams.delete("sort");
+                    }
+                    setSearchParams(searchParams);
+                  }}
+                />
+                <label className="text-slate-700" htmlFor={option.id}>
+                  {option.label}
+                </label>
+              </div>
+            ))}
           </AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -70,88 +93,159 @@ export default function ShopFilterSidebar() {
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="sizes">
           <AccordionTrigger>Size</AccordionTrigger>
-          <AccordionContent>
-            <div className="space-y-2">
-              <p>coming soon</p>
-            </div>
+          <AccordionContent
+            className={"flex flex-col justify-start items-start gap-2"}
+          >
+            {["XS", "S", "M", "L", "XL", "2XL"].map((size) => (
+              <div key={size} className="flex space-x-2">
+                <Checkbox
+                  id={`size-${size}`}
+                  checked={searchParams.getAll("size").includes(size)}
+                  onCheckedChange={() => handleCheckboxChange("size", size)}
+                />
+                <label
+                  htmlFor={`size-${size}`}
+                  className="text-sm font-medium leading-none"
+                >
+                  {size}
+                </label>
+              </div>
+            ))}
           </AccordionContent>
         </AccordionItem>
       </Accordion>
 
-      <Accordion type="single" collapsible className="w-full">
+      {/* <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="price">
           <AccordionTrigger>Price Range</AccordionTrigger>
           <AccordionContent>
-            <div>
-              <Slider
-                className={"mt-2"}
-                defaultValue={[0, 1000]}
-                max={1000}
-                step={10}
-              />
-              <div className="flex justify-between text-sm mt-3">
-                <span>$0</span>
-                <span>$100</span>
-              </div>
+            <Slider
+              className={"mt-2"}
+              defaultValue={[0, 1000]}
+              max={1000}
+              step={10}
+              onValueChange={(value) => {
+                searchParams.set("priceMin", value[0]);
+                searchParams.set("priceMax", value[1]);
+                setSearchParams(searchParams);
+              }}
+            />
+            <div className="flex justify-between text-sm mt-3">
+              <span>${searchParams.get("priceMin") || 0}</span>
+              <span>${searchParams.get("priceMax") || 1000}</span>
             </div>
           </AccordionContent>
         </AccordionItem>
-      </Accordion>
+      </Accordion> */}
 
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="ratings">
           <AccordionTrigger>Ratings</AccordionTrigger>
-          <AccordionContent>
-            <div className="space-y-2">
-              {[5, 4, 3, 2, 1].map((rating) => (
-                <div key={rating} className="flex items-center space-x-2">
-                  <Checkbox id={`rating-${rating}`} />
-                  <label
-                    htmlFor={`rating-${rating}`}
-                    className="text-sm font-medium leading-none flex items-center"
-                  >
-                    {[...Array(rating)].map((_, i) => (
-                      <span key={i} className="text-yellow-400">
-                        ★
-                      </span>
-                    ))}
-                  </label>
-                </div>
-              ))}
-            </div>
+          <AccordionContent
+            className={"flex flex-col justify-start items-start gap-2"}
+          >
+            {[5, 4, 3, 2, 1].map((rating) => (
+              <div key={rating} className="flex space-x-2">
+                <Checkbox
+                  id={`rating-${rating}`}
+                  checked={searchParams
+                    .getAll("ratings")
+                    .includes(rating.toString())}
+                  onCheckedChange={() =>
+                    handleCheckboxChange("ratings", rating.toString())
+                  }
+                />
+                <label
+                  htmlFor={`rating-${rating}`}
+                  className="text-sm font-medium leading-none flex items-center"
+                >
+                  {[...Array(rating)].map((_, i) => (
+                    <span key={i} className="text-yellow-400">
+                      ★
+                    </span>
+                  ))}
+                </label>
+              </div>
+            ))}
           </AccordionContent>
         </AccordionItem>
       </Accordion>
 
-      <div className="flex space-x-2">
-        <Button variant="outline" className="flex items-center justify-center">
-          <X className="mr-1" /> Clear
-        </Button>
-        <Button className="">Apply</Button>
-      </div>
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="availability">
+          <AccordionTrigger>Availability</AccordionTrigger>
+          <AccordionContent
+            className={"flex flex-col justify-start items-start gap-2"}
+          >
+            <div className="flex space-x-2">
+              <Checkbox
+                id={"stock"}
+                checked={searchParams.get("stock") === "in"}
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    searchParams.set("stock", "in");
+                  } else {
+                    searchParams.delete("stock");
+                  }
+                  setSearchParams(searchParams);
+                }}
+              />
+              <label
+                htmlFor={"stock"}
+                className="text-sm font-medium leading-none flex items-center"
+              >
+                Stock
+              </label>
+            </div>
+            <div className="flex space-x-2">
+              <Checkbox
+                id={"out-of-stock"}
+                checked={searchParams.get("stock") === "out"}
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    searchParams.set("stock", "out");
+                  } else {
+                    searchParams.delete("stock");
+                  }
+                  setSearchParams(searchParams);
+                }}
+              />
+              <label
+                htmlFor={"out-of-stock"}
+                className="text-sm font-medium leading-none flex items-center"
+              >
+                Out of Stock
+              </label>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   );
 
   return (
     <>
-      <div className="lg:hidden mb-4 flex justify-between items-center">
-        <Sheet open={mobileFilterOpen} onOpenChange={setMobileFilterOpen}>
-          <SheetTrigger asChild>
-            <Button variant="outline">
-              <Filter className="mr-1" /> Filters
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-[300px] overflow-y-auto">
-            <SheetHeader>
-              <SheetTitle>Filter</SheetTitle>
-            </SheetHeader>
-            <FilterContent />
-          </SheetContent>
-        </Sheet>
-      </div>
+      <div className="space-y-2">
+        <ActiveFilters />
+        <div className="lg:hidden mb-2 flex justify-between items-center">
+          <Sheet open={mobileFilterOpen} onOpenChange={setMobileFilterOpen}>
+            <SheetTrigger asChild>
+              <Button variant="outline">
+                <Filter className="mr-1" /> Filters
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[300px] overflow-y-auto">
+              <SheetHeader>
+                <SheetTitle>Filters</SheetTitle>
+              </SheetHeader>
+              <FilterContent />
+            </SheetContent>
+          </Sheet>
+        </div>
 
-      <div className="hidden lg:block w-64 border-r pr-4">
-        <FilterContent />
+        <div className="hidden lg:block w-64 border-r pr-4">
+          <FilterContent />
+        </div>
       </div>
     </>
   );

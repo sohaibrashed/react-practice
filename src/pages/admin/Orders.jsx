@@ -21,6 +21,11 @@ import {
 import Paginate from "@/components/Paginate";
 import { useSearchParams } from "react-router";
 import { Input } from "@/components/ui/input";
+import { orderTableConfig } from "@/utils/tableConfig";
+import { orderFormConfig } from "@/utils/formConfig";
+import DynamicForm from "@/components/admin/DynamicForm";
+import OrderDetails from "@/components/OrderDetails";
+import ReusableDataTable from "@/components/admin/ReusableDataTable";
 
 export default function Orders() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -169,11 +174,23 @@ export default function Orders() {
         />
         <Search className="absolute right-3 text-gray-400" size={20} />
       </div>
-      <OrderTable
+      {/* <OrderTable
         orders={orders?.data}
         onUpdateOrder={handleOrderUpdate}
         handleDeleteOrder={handleOrderDelete}
         isLoading={updateLoading || deleteLoading || false}
+      /> */}
+
+      <ReusableDataTable
+        data={orders?.data}
+        columns={orderTableConfig}
+        onView={(id) => console.log("Viewing", id)}
+        onEdit={(order, id) => handleOrderUpdate(order, id)}
+        onDelete={(id) => handleOrderDelete(id)}
+        ViewComponent={OrderDetails}
+        EditFormComponent={DynamicForm}
+        formConfig={orderFormConfig}
+        caption="A list of registered orders."
       />
       <div className="mt-4">
         <Paginate
