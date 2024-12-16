@@ -44,7 +44,6 @@ export default function ReusableDataTable({
   onDelete,
   ViewComponent,
   EditFormComponent,
-  formConfig,
   caption = "A list of items",
   isLoading = false,
 }) {
@@ -156,12 +155,12 @@ export default function ReusableDataTable({
                             </DialogTrigger>
 
                             <EditFormComponent
-                              formConfig={formConfig}
                               onSubmit={(updatedData, id) =>
                                 handleEdit(updatedData, id)
                               }
-                              initialData={item}
+                              data={item}
                               isEdit={true}
+                              isLoading={isLoading}
                             />
                           </Dialog>
                         </DropdownMenuItem>

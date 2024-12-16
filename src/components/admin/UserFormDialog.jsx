@@ -21,10 +21,11 @@ import FormError from "../FormError";
 
 export default function UserFormDialog({
   onSubmit,
-  user = {},
+  data = {},
   isEdit = false,
   isLoading = false,
 }) {
+  const user = data || {};
   const userSchema = isEdit ? userUpdateSchema : userAddSchema;
   const userStates = isEdit
     ? { name: user.name || "", email: user.email || "", role: user.role || "" }

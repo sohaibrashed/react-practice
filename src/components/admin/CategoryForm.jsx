@@ -79,7 +79,7 @@ export default function CategoryForm() {
       </div>
       <h3 className="text-lg font-semibold mt-6 mb-2">Existing Categories</h3>
       <ul className="space-y-2 overflow-y-auto h-32">
-        {categories.data.map((category) => (
+        {categories?.data?.map((category) => (
           <li key={category._id} className="p-2 bg-gray-100 rounded">
             {category.name}
           </li>

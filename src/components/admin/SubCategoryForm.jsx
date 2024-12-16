@@ -97,7 +97,7 @@ export default function SubCategoryForm() {
             <SelectValue placeholder="Select a category" />
           </SelectTrigger>
           <SelectContent>
-            {categories?.data.map((category) => (
+            {categories?.data?.map((category) => (
               <SelectItem key={category._id} value={category.name}>
                 {category.name}
               </SelectItem>
@@ -117,9 +117,9 @@ export default function SubCategoryForm() {
         Existing Sub-Categories for {selectedCategory || ""}
       </h3>
       <ul className="space-y-2 overflow-y-auto h-32">
-        {subCategories.data
-          .filter((sub) => sub?.category?.name === selectedCategory)
-          .map((sub) => (
+        {subCategories?.data
+          ?.filter((sub) => sub?.category?.name === selectedCategory)
+          ?.map((sub) => (
             <li key={sub._id} className="p-2 bg-gray-100 rounded">
               {sub.name}{" "}
               <span className="text-sm text-gray-500">

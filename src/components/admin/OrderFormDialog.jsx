@@ -21,10 +21,11 @@ import FormError from "../FormError";
 
 export default function OrderFormDialog({
   onSubmit,
-  order = {},
+  data = {},
   isEdit = false,
   isLoading = false,
 }) {
+  const order = data || {};
   const initialState = isEdit
     ? {
         totalAmount: order.totalAmount || 0,

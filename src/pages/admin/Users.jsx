@@ -1,31 +1,26 @@
 import { useState } from "react";
 import UserFormDialog from "@/components/admin/UserFormDialog";
-import UserTable from "@/components/admin/UserTable";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
-import { useToast } from "@/hooks/use-toast";
 import {
   useCreateUserMutation,
   useDeleteUserMutation,
   useGetUsersQuery,
   useUpdateUserMutation,
 } from "@/services/usersApi";
-import { CirclePlus, Search } from "lucide-react";
-import { useNavigate, useSearchParams } from "react-router";
+import { useSearchParams } from "react-router";
 import Paginate from "@/components/Paginate";
-import { Input } from "@/components/ui/input";
 import ReusableDataTable from "@/components/admin/ReusableDataTable";
 import SingleUser from "./SingleUser";
-import DynamicForm from "@/components/admin/DynamicForm";
 import { userTableConfig } from "@/utils/tableConfig";
-import { userFormConfig, userUpdateFormConfig } from "@/utils/formConfig";
+import { useErrorHandler } from "@/hooks/UseErrorHandler";
+import Logger from "@/utils/logger";
+import SearchBar from "@/components/SearchBar";
+import InventoryLayout from "@/components/admin/InventoryLayout";
 
 export default function Users() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isDialogOpen, setDialogOpen] = useState(false);
-  const { toast } = useToast();
-  const navigate = useNavigate();
+  const { error, handleError, clearError } = useErrorHandler();
 
   const filters = Object.fromEntries(searchParams.entries());
 
@@ -63,68 +58,45 @@ export default function Users() {
   }
 
   const handlePageChange = (page) => {
+    Logger.debug(`Changing to page: ${page}`);
     setSearchParams({ page });
   };
 
   const handleUserDelete = async (id) => {
-    try {
-      if (deleteLoading) return;
+    if (deleteLoading) return;
 
-      await deleteUser(id);
-      if (deleteError) throw Error;
-      if (deleteSuccess) {
-        toast({
-          title: "User deleted successfully.",
-        });
-      }
-    } catch (error) {
-      // console.log(error);
-      toast({
-        variant: "destructive",
-        title: "An error occurred during deleting user.",
-      });
+    try {
+      await deleteUser(id).unwrap();
+      Logger.success("User deleted successfully");
+      clearError();
+    } catch (err) {
+      handleError("Failed to delete user", err);
     }
   };
 
   const handleUserUpdate = async (updatedData, id) => {
+    if (updateLoading) return;
+
     try {
-      if (updateLoading) return;
-
-      await updateUser({ data: updatedData, id });
-
-      if (updateSuccess) {
-        toast({
-          title: "User updated successfully.",
-        });
-        setDialogOpen(false);
-      }
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "An error occurred during updating user.",
-      });
+      await updateUser({ data: updatedData, id }).unwrap();
+      Logger.success("User updated successfully");
+      setDialogOpen(false);
+      clearError();
+    } catch (err) {
+      handleError("Failed to update user", err);
     }
   };
 
   const handleUserCreation = async (data) => {
+    if (createLoading) return;
+
     try {
-      if (createLoading) return;
-
-      await createUser(data);
-      if (createError) throw new Error(createError);
-      if (createSuccess) {
-        toast({
-          title: "User created successfully.",
-        });
-      }
+      await createUser(data).unwrap();
+      Logger.success("User created successfully");
       setDialogOpen(false);
-    } catch (error) {
-      console.log(...error.message);
-
-      toast({
-        variant: "destructive",
-        title: "An error occurred during creating user.",
-      });
+      clearError();
+    } catch (err) {
+      handleError("Failed to create user", err);
     }
   };
 
@@ -135,67 +107,42 @@ export default function Users() {
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-4xl font-bold">Users</h1>
-
-        <Dialog open={isDialogOpen} onOpenChange={handleDialogChange}>
-          <DialogTrigger asChild>
-            <Button
-              className="bg-green-500 sm:w-40 hover:bg-green-600 ml-1"
-              onClick={() => !createLoading && setDialogOpen(true)}
-              disabled={createLoading}
-            >
-              <CirclePlus />
-              <span>Add</span>
-            </Button>
-          </DialogTrigger>
-
-          <DynamicForm
-            formConfig={userFormConfig}
-            onSubmit={handleUserCreation}
-            isLoading={createLoading}
-            isEdit={false}
-          />
-        </Dialog>
-      </div>
-      <div className="relative w-full mb-2 flex items-center">
-        <Input
-          type="text"
-          // value={searchQuery}
-          // onChange={handleSearchChange}
-          placeholder="Search..."
-          className="rounded-lg shadow-sm py-6"
+    <InventoryLayout
+      title="Users"
+      isDialogOpen={isDialogOpen}
+      handleDialogChange={handleDialogChange}
+      handleAddClick={() => !createLoading && setDialogOpen(true)}
+      isLoading={isLoading || createLoading || updateLoading || deleteLoading}
+      DialogComponent={
+        <UserFormDialog
+          onSubmit={handleUserCreation}
+          isLoading={createLoading}
+          isEdit={false}
         />
-        <Search className="absolute right-3 text-gray-400" size={20} />
-      </div>
-      {/* <UserTable
-        users={users?.data}
-        onUpdateUser={handleUserUpdate}
-        handleDeleteUser={handleUserDelete}
-        isLoading={updateLoading || deleteLoading || false}
-      /> */}
-
-      <ReusableDataTable
-        data={users?.data}
-        columns={userTableConfig}
-        onView={(id) => console.log("Viewing", id)}
-        onEdit={(user, id) => handleUserUpdate(user, id)}
-        onDelete={(id) => handleUserDelete(id)}
-        ViewComponent={SingleUser}
-        EditFormComponent={DynamicForm}
-        formConfig={userUpdateFormConfig}
-        caption="A list of registered users."
-      />
-
-      <div className="mt-4">
+      }
+      SearchComponent={<SearchBar />}
+      TableComponent={
+        <ReusableDataTable
+          data={users?.data}
+          columns={userTableConfig}
+          onView={(id) => console.log("Viewing", id)}
+          onEdit={(user, id) => handleUserUpdate(user, id)}
+          onDelete={(id) => handleUserDelete(id)}
+          ViewComponent={SingleUser}
+          EditFormComponent={UserFormDialog}
+          caption="A list of registered users."
+          isLoading={
+            isLoading || createLoading || updateLoading || deleteLoading
+          }
+        />
+      }
+      PaginationComponent={
         <Paginate
           currentPage={users?.pagination?.currentPage}
           totalPages={users?.pagination?.totalPages}
           onPageChange={(page) => handlePageChange(page)}
         />
-      </div>
-      {isError && "Something went wrong"}
-    </div>
+      }
+    />
   );
 }

@@ -26,10 +26,11 @@ import FormError from "../FormError";
 
 export default function ProductFormDialog({
   onSubmit,
-  product = {},
+  data = {},
   isEdit = false,
   isLoading = false,
 }) {
+  const product = data || {};
   const {
     register,
     handleSubmit,
@@ -40,13 +41,13 @@ export default function ProductFormDialog({
   } = useFormValidation(productValidationSchema, {
     name: product.name || "",
     description: product.description || "",
-    price: product.price || "",
+    price: product.price || 0,
     category: product.category?.name || "",
     subCategory: product.subCategory?.name || "",
     size: product.size || "",
     color: product.color || "",
     material: product.material || "",
-    stock: product.stock || "",
+    stock: product.stock || 0,
     tags: product.tags?.join("\n") || "",
     brand: product.brand || "",
     images: product.images?.join("\n") || "",
@@ -70,6 +71,7 @@ export default function ProductFormDialog({
     };
 
     if (isEdit) {
+      console.log(data);
       onSubmit(data, product._id);
     } else {
       onSubmit(data);
@@ -142,6 +144,7 @@ export default function ProductFormDialog({
             disabled={isLoading}
             value={category}
             onValueChange={(value) => setValue("category", value)}
+            defaultValue={product?.category?.name || ""}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a category" />
@@ -164,6 +167,7 @@ export default function ProductFormDialog({
             disabled={isLoading}
             value={subCategory}
             onValueChange={(value) => setValue("subCategory", value)}
+            defaultValue={product?.subCategory?.name || ""}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a sub-category" />
