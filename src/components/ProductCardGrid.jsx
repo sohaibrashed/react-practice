@@ -19,6 +19,8 @@ export default function ProductCardGrid() {
     navigate(`/product/${id}`);
   };
 
+  console.log(data);
+
   return (
     <div className="container mx-auto px-4 py-6">
       <h2 className="text-3xl sm:text-4xl md:text-5xl text-slate-900 font-semibold mb-6 relative after:absolute after:left-0 after:bottom-0 after:w-16 after:h-1 after:bg-pink-600 after:rounded-full">
