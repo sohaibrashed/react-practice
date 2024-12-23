@@ -31,34 +31,56 @@ const cartSlice = createSlice({
     },
 
     removeFromCart: (state, action) => {
-      const { _id } = action.payload;
+      const item = action.payload;
+      const { selectedVariant } = item;
 
-      state.cartItems = state.cartItems.filter((item) => item._id !== _id);
+      state.cartItems = state.cartItems.filter(
+        (cartItem) =>
+          !(
+            cartItem._id === item._id &&
+            cartItem.selectedVariant?._id === selectedVariant?._id
+          )
+      );
 
       localStorage.setItem("cart", JSON.stringify(state.cartItems));
     },
 
     incrementQuantityOfItem: (state, action) => {
-      const { _id } = action.payload;
+      const item = action.payload;
+      const { selectedVariant } = item;
 
-      const item = state.cartItems.find((cartItem) => cartItem._id === _id);
-      if (item && item.stock > item.quantity) {
-        item.quantity += 1;
+      const existingItem = state.cartItems.find(
+        (cartItem) =>
+          cartItem._id === item._id &&
+          cartItem.selectedVariant._id === selectedVariant._id
+      );
+      if (
+        existingItem &&
+        existingItem.selectedVariant.stock > existingItem.quantity
+      ) {
+        existingItem.quantity += 1;
       }
 
       localStorage.setItem("cart", JSON.stringify(state.cartItems));
     },
 
     decrementQuantityOfItem: (state, action) => {
-      const { _id } = action.payload;
+      const item = action.payload;
+      const { selectedVariant } = item;
 
-      const item = state.cartItems.find((cartItem) => cartItem._id === _id);
-      if (item) {
-        item.quantity -= 1;
+      const existingItem = state.cartItems.find(
+        (cartItem) =>
+          cartItem._id === item._id &&
+          cartItem.selectedVariant._id === selectedVariant._id
+      );
+      if (existingItem) {
+        existingItem.quantity -= 1;
 
-        if (item.quantity <= 0) {
+        if (existingItem.quantity <= 0) {
           state.cartItems = state.cartItems.filter(
-            (cartItem) => cartItem._id !== _id
+            (cartItem) =>
+              cartItem._id !== item._id &&
+              cartItem.selectedVariant._id === selectedVariant._id
           );
         }
       }

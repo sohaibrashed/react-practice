@@ -11,6 +11,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { useSelector } from "react-redux";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { useGetProductQuery } from "@/services/productsApi";
 import { formatPrice } from "@/utils/helper";
@@ -19,22 +20,30 @@ import AddToCart from "./AddToCart";
 export default function ProductDetails({ id }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const cartItems = useSelector((state) => state.cart.cartItems);
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedVariant, setSelectedVariant] = useState(null);
   const { data: { product } = {}, isLoading, isError } = useGetProductQuery(id);
 
-  // Initialize default selections when product data loads
+  let cartItem =
+    cartItems.length > 0
+      ? cartItems.find((item) => item?._id === product?._id)
+      : null;
+
   useEffect(() => {
-    if (product?.variants?.length > 0) {
+    if (cartItem) {
+      setSelectedColor(cartItem.selectedVariant.color);
+      setSelectedSize(cartItem.selectedVariant.size);
+      setSelectedVariant(cartItem.selectedVariant);
+    } else if (product?.variants?.length > 0) {
       const firstVariant = product.variants[0];
       setSelectedColor(firstVariant.color);
       setSelectedSize(firstVariant.size);
       setSelectedVariant(firstVariant);
     }
-  }, [product]);
+  }, [product, cartItem]);
 
-  // Get available sizes for selected color
   const getAvailableSizes = (color) => {
     return (
       product?.variants.filter((v) => v.color === color).map((v) => v.size) ||
@@ -42,20 +51,17 @@ export default function ProductDetails({ id }) {
     );
   };
 
-  // Get variant by color and size
   const getVariant = (color, size) => {
     return product?.variants.find((v) => v.color === color && v.size === size);
   };
 
-  // Handle color selection
   const handleColorChange = (color) => {
     setSelectedColor(color);
     const sizes = getAvailableSizes(color);
-    setSelectedSize(sizes[0]); // Select first available size
+    setSelectedSize(sizes[0]);
     setSelectedVariant(getVariant(color, sizes[0]));
   };
 
-  // Handle size selection
   const handleSizeChange = (size) => {
     setSelectedSize(size);
     setSelectedVariant(getVariant(selectedColor, size));

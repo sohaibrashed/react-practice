@@ -18,7 +18,11 @@ export default function AddToCart({
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.cartItems);
 
-  const itemInCart = cartItems.find((product) => product._id === item._id);
+  const itemInCart = cartItems.find(
+    (product) =>
+      product._id === item._id &&
+      product.selectedVariant._id === item?.selectedVariant?._id
+  );
 
   const handleAddToCart = () => {
     if (!item) return;
@@ -29,7 +33,10 @@ export default function AddToCart({
     }
   };
 
-  if (itemInCart) {
+  if (
+    itemInCart &&
+    itemInCart.selectedVariant._id === item?.selectedVariant?._id
+  ) {
     const { quantity } = itemInCart;
 
     return (
