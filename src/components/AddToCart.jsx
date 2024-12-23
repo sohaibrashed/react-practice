@@ -7,7 +7,14 @@ import {
 } from "@/services/cartSlice";
 import { MinusCircleIcon, PlusCircleIcon } from "lucide-react";
 
-export default function AddToCart({ className = "", size, children, item }) {
+export default function AddToCart({
+  className = "",
+  size,
+  variant = "default",
+  children,
+  item,
+  disabled = false,
+}) {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.cartItems);
 
@@ -52,6 +59,8 @@ export default function AddToCart({ className = "", size, children, item }) {
     <Button
       size={size}
       className={className}
+      variant={variant}
+      disabled={disabled}
       onClick={(e) => {
         e.stopPropagation();
         handleAddToCart();

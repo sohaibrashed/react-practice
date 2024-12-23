@@ -15,14 +15,14 @@ export default function CartDrawer() {
   const items = useSelector((state) => state.cart.cartItems);
   const dispatch = useDispatch();
 
-  // console.log("from cart drawer: ", items);
-
+  // Calculate the total price
   const calculateTotal = (items) => {
     return items
-      .reduce((acc, item) => acc + item.price * item.quantity, 0)
+      .reduce((acc, item) => acc + item.price.base * item.quantity, 0)
       .toFixed(2);
   };
 
+  // Handle item deletion
   const handleDeletion = (item) => {
     dispatch(removeFromCart(item));
   };
@@ -46,18 +46,28 @@ export default function CartDrawer() {
             >
               <div className="flex items-center gap-2">
                 <img
-                  src={item.images[0]}
-                  alt={item.name}
+                  // Updated to fetch the first image from the first variant
+                  src={item.variants[0]?.images[0] || "/placeholder.jpg"}
+                  alt={item.name || "Product Image"}
                   className="w-24 h-36 object-cover rounded-lg"
                 />
 
                 <div className="flex flex-col items-start gap-2">
-                  <h4 className="font-medium text-gray-800">{item.name}</h4>
+                  {/* Product Name */}
+                  <h4 className="font-medium text-gray-800">
+                    {item.name || "Unnamed Product"}
+                  </h4>
+
+                  {/* Quantity and Price */}
                   <p className="text-gray-600 text-sm">
-                    {item.quantity} × ${item.price}
+                    {item.quantity} × ${item.price.base.toFixed(2)}
                   </p>
+
                   <div className="flex items-center gap-8">
+                    {/* Add to Cart Button */}
                     <AddToCart item={item} />
+
+                    {/* Delete Button */}
                     <button
                       onClick={() => handleDeletion(item)}
                       className="text-gray-400 hover:text-red-600"
@@ -71,6 +81,8 @@ export default function CartDrawer() {
           ))
         )}
       </div>
+
+      {/* Footer with Total and Checkout */}
       {items.length > 0 && (
         <div className="p-4 border-t">
           <div className="flex justify-between mb-4">

@@ -20,8 +20,8 @@ export default function SignInForm() {
     handleSubmit,
     formState: { errors },
   } = useFormValidation(signinSchema, {
-    email: "salman@gmail.com",
-    password: "123456",
+    email: "sohaib@gmail.com",
+    password: "password",
   });
 
   const [signin, { isLoading, isError }] = useSigninMutation();

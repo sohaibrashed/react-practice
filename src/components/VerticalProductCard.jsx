@@ -1,84 +1,168 @@
-import { Card } from "@/components/ui/card";
+import React, { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, ShoppingCart, Star } from "lucide-react";
-import Rating from "react-rating";
-import { Badge } from "./ui/badge";
+import {
+  Heart,
+  ShoppingCart,
+  Star,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { formatPrice } from "@/utils/helper";
 import AddToCart from "./AddToCart";
 
-export default function VerticalProductCard({ product, onClick }) {
+export default function VerticalProductCard({ product, onClick, handleFav }) {
+  const [currentVariantIndex, setCurrentVariantIndex] = useState(0);
+  const currentVariant = product.variants[currentVariantIndex];
+
   return (
     <Card
-      onClick={() => onClick(product._id)}
-      className="group border border-gray-200 rounded-lg overflow-hidden bg-white cursor-pointer flex flex-col items-center sm:flex-row sm:items-stretch sm:gap-2"
+      className="group w-full max-w-2xl mx-auto overflow-hidden"
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick(product._id);
+      }}
     >
-      <div className="relative w-full sm:w-1/3 h-72 sm:h-auto">
-        <img
-          src={product.images?.[0]}
-          alt={product.name}
-          className="w-full h-72 object-cover transition-transform duration-300 group-hover:scale-105"
-        />
-        <div className="absolute top-2 right-2 flex space-x-2">
-          <Button
-            variant="outline"
-            className="bg-white text-gray-600 hover:text-gray-900"
-          >
-            <Heart size={20} />
-          </Button>
-        </div>
-      </div>
+      <CardContent className="p-0">
+        <div className="grid md:grid-cols-2">
+          <div className="relative h-[400px] w-full">
+            <Carousel className="w-full h-full">
+              <CarouselContent asChild>
+                {currentVariant.images.map((image, index) => (
+                  <CarouselItem key={index}>
+                    <div className="h-[400px] w-full relative">
+                      <img
+                        src={image}
+                        alt={`${product.name} - View ${index + 1}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handle(product._id);
+                        }}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              {/* <CarouselPrevious />
+              <CarouselNext /> */}
+            </Carousel>
 
-      <div className="p-4 flex-1 flex flex-col justify-between w-full sm:w-2/3">
-        <div>
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-semibold text-gray-900 truncate">
-              {product.name.length > 30
-                ? `${product.name.slice(0, 30)}...`
-                : product.name}
-            </h3>
-            <div className="flex items-center gap-2">
-              <Badge>{product?.category?.name}</Badge>
-              <Badge variant="secondary">{product?.subCategory?.name}</Badge>
-            </div>
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm hover:bg-white/90"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleFav(product._id);
+              }}
+            >
+              <Heart className="h-4 w-4" />
+            </Button>
           </div>
-          <p className="text-sm text-gray-500 line-clamp-3 h-10">
-            {product.description}...
-          </p>
-        </div>
 
-        <div className="flex justify-between items-center mt-4">
-          <Rating
-            emptySymbol={<Star strokeWidth={0.5} size={16} fill="#fefbfb" />}
-            fullSymbol={<Star strokeWidth={0.5} size={16} fill="yellow" />}
-            fractions={2}
-            initialRating={product.ratings}
-            readonly={true}
-          />
-          <span className="text-xl font-semibold text-gray-900">
-            ${product.price}
-          </span>
-        </div>
+          <div className="p-6 flex flex-col gap-4">
+            <div className="space-y-2">
+              <div className="flex items-start justify-between gap-2">
+                <h2 className="font-semibold text-xl leading-tight line-clamp-1">
+                  {product.name}
+                </h2>
+                <Badge variant="secondary" className="capitalize line-clamp-1">
+                  {product.category.name}
+                </Badge>
+              </div>
 
-        <div className="mt-4">
-          <p className="text-sm text-gray-500 line-clamp-1">
-            <strong>Brand:</strong> {product.brand} ...
-          </p>
-          {product.material && (
-            <p className="text-sm text-gray-500 line-clamp-1">
-              <strong>Material:</strong> {product.material}
-            </p>
-          )}
-          <p className="text-sm text-gray-500">
-            <strong>Stock:</strong>{" "}
-            {product.stock > 0 ? `${product.stock} available` : "Out of stock"}
-          </p>
-        </div>
+              <div className="flex items-center gap-2">
+                <div className="flex">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`w-4 h-4 ${
+                        i < product.ratings.average
+                          ? "fill-yellow-400 stroke-yellow-400"
+                          : "fill-gray-200 stroke-gray-200"
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className="text-sm text-gray-500">
+                  ({product.ratings.count} reviews)
+                </span>
+              </div>
 
-        <div className="mt-4 flex justify-between items-center">
-          <AddToCart item={product}>
-            <ShoppingCart size={20} className="mr-2" /> Add to Cart
-          </AddToCart>
+              <div className="text-2xl font-bold">
+                {formatPrice(product.price.base, product.price.currency)}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-sm font-medium mb-2">Sizes</h3>
+                <div className="flex flex-wrap gap-2">
+                  {Array.from(new Set(product.variants.map((v) => v.size))).map(
+                    (size) => (
+                      <Badge
+                        key={size}
+                        variant="outline"
+                        className="cursor-pointer hover:bg-gray-100"
+                      >
+                        {size}
+                      </Badge>
+                    )
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-sm font-medium mb-2">Colors</h3>
+                <div className="flex flex-wrap gap-2">
+                  {Array.from(
+                    new Set(product.variants.map((v) => v.color))
+                  ).map((color) => (
+                    <Badge
+                      key={color}
+                      variant="outline"
+                      className="cursor-pointer hover:bg-gray-100 line-clamp-1"
+                    >
+                      {color}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              <div className="text-sm text-gray-500 space-y-1">
+                <p className="line-clamp-1">
+                  <span className="font-medium">Brand:</span>{" "}
+                  {product.brand.name}
+                </p>
+                {product.materials.length > 0 && (
+                  <p className="line-clamp-1">
+                    <span className="font-medium">Material:</span>{" "}
+                    {product.materials.join(", ")}
+                  </p>
+                )}
+                <p className="line-clamp-1">
+                  <span className="font-medium">Stock:</span>{" "}
+                  {currentVariant.stock} available
+                </p>
+              </div>
+            </div>
+
+            <AddToCart item={product} className="w-full">
+              <ShoppingCart className="mr-2 h-4 w-4" />
+              Add to Cart
+            </AddToCart>
+          </div>
         </div>
-      </div>
+      </CardContent>
     </Card>
   );
 }
