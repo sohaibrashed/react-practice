@@ -79,8 +79,10 @@ const cartSlice = createSlice({
         if (existingItem.quantity <= 0) {
           state.cartItems = state.cartItems.filter(
             (cartItem) =>
-              cartItem._id !== item._id &&
-              cartItem.selectedVariant._id === selectedVariant._id
+              !(
+                cartItem._id === item._id &&
+                cartItem.selectedVariant?._id === selectedVariant?._id
+              )
           );
         }
       }

@@ -16,56 +16,32 @@ import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { useGetProductQuery } from "@/services/productsApi";
 import { formatPrice } from "@/utils/helper";
 import AddToCart from "./AddToCart";
+import { useVariantSelector } from "@/hooks/useVariantSelector";
+import Rating from "./Ratings";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./ui/accordion";
 
 export default function ProductDetails({ id }) {
   const navigate = useNavigate();
   const location = useLocation();
   const cartItems = useSelector((state) => state.cart.cartItems);
-  const [selectedColor, setSelectedColor] = useState(null);
-  const [selectedSize, setSelectedSize] = useState(null);
-  const [selectedVariant, setSelectedVariant] = useState(null);
   const { data: { product } = {}, isLoading, isError } = useGetProductQuery(id);
 
-  let cartItem =
-    cartItems.length > 0
-      ? cartItems.find((item) => item?._id === product?._id)
-      : null;
+  const cartItem = cartItems.find((item) => item?._id === product?._id) || null;
 
-  useEffect(() => {
-    if (cartItem) {
-      setSelectedColor(cartItem.selectedVariant.color);
-      setSelectedSize(cartItem.selectedVariant.size);
-      setSelectedVariant(cartItem.selectedVariant);
-    } else if (product?.variants?.length > 0) {
-      const firstVariant = product.variants[0];
-      setSelectedColor(firstVariant.color);
-      setSelectedSize(firstVariant.size);
-      setSelectedVariant(firstVariant);
-    }
-  }, [product, cartItem]);
-
-  const getAvailableSizes = (color) => {
-    return (
-      product?.variants.filter((v) => v.color === color).map((v) => v.size) ||
-      []
-    );
-  };
-
-  const getVariant = (color, size) => {
-    return product?.variants.find((v) => v.color === color && v.size === size);
-  };
-
-  const handleColorChange = (color) => {
-    setSelectedColor(color);
-    const sizes = getAvailableSizes(color);
-    setSelectedSize(sizes[0]);
-    setSelectedVariant(getVariant(color, sizes[0]));
-  };
-
-  const handleSizeChange = (size) => {
-    setSelectedSize(size);
-    setSelectedVariant(getVariant(selectedColor, size));
-  };
+  const {
+    selectedColor,
+    selectedSize,
+    selectedVariant,
+    availableColors,
+    availableSizes,
+    handleColorChange,
+    handleSizeChange,
+  } = useVariantSelector(product, cartItem);
 
   if (isLoading) {
     return (
@@ -86,8 +62,11 @@ export default function ProductDetails({ id }) {
   }
 
   const isProductPage = location.pathname === `/product/${id}`;
-  const availableColors = [...new Set(product.variants.map((v) => v.color))];
-  const availableSizes = getAvailableSizes(selectedColor);
+
+  const handleBuyNow = () => {
+    if (!selectedVariant || !selectedVariant.stock) return;
+    navigate("/checkout");
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
@@ -101,8 +80,8 @@ export default function ProductDetails({ id }) {
         </Button>
 
         <Card className="bg-white shadow-md">
-          <div className="grid md:grid-cols-2 gap-8 p-6">
-            <div className="relative h-[400px] md:h-[600px] w-full bg-gray-50 rounded-lg overflow-hidden">
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="relative h-[400px] md:h-[600px] w-full bg-gray-50 rounded-s-lg overflow-hidden">
               {selectedVariant && (
                 <Carousel className="w-full h-full">
                   <CarouselContent>
@@ -128,7 +107,7 @@ export default function ProductDetails({ id }) {
               )}
             </div>
 
-            <div className="flex flex-col space-y-6">
+            <div className="flex flex-col space-y-6 p-6">
               <div className="space-y-4">
                 <div className="flex items-start justify-between gap-2">
                   <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
@@ -138,30 +117,29 @@ export default function ProductDetails({ id }) {
                     {product.category.name}
                   </Badge>
                 </div>
-
-                <p className="text-gray-600">{product.description}</p>
-
-                <div className="flex items-center gap-2">
-                  <div className="flex">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`w-4 h-4 ${
-                          i < product.ratings.average
-                            ? "fill-yellow-400 stroke-yellow-400"
-                            : "fill-gray-200 stroke-gray-200"
-                        }`}
-                      />
-                    ))}
+                <Rating
+                  average={product.ratings.average}
+                  count={product.ratings.count}
+                  starSize="h-3.5 w-3.5"
+                  className="mb-2"
+                />
+                {product.price.sale ? (
+                  <div>
+                    <div className="text-base font-semibold line-through text-gray-500">
+                      {formatPrice(product.price.base, product.price.currency)}
+                    </div>
+                    <div className="text-3xl font-bold text-gray-900">
+                      {formatPrice(product.price.sale, product.price.currency)}
+                      <span className="text-sm text-green-500 ml-4 font-medium">
+                        {product?.discountPercentage}% off
+                      </span>
+                    </div>
                   </div>
-                  <span className="text-sm text-gray-500">
-                    ({product.ratings.count} reviews)
-                  </span>
-                </div>
-
-                <div className="text-3xl font-bold text-gray-900">
-                  {formatPrice(product.price.base, product.price.currency)}
-                </div>
+                ) : (
+                  <div className="text-3xl font-bold text-gray-900">
+                    {formatPrice(product.price.base, product.price.currency)}
+                  </div>
+                )}
               </div>
 
               <div className="space-y-6">
@@ -234,20 +212,22 @@ export default function ProductDetails({ id }) {
               </div>
 
               {isProductPage && (
-                <div className="flex flex-col sm:flex-row gap-4 mt-8">
-                  <Button
-                    size="lg"
-                    className="flex-1 bg-pink-600 hover:bg-pink-700 text-white"
-                    variant="default"
-                    disabled={!selectedVariant || selectedVariant.stock === 0}
-                    onClick={() => navigate("/checkout")}
-                  >
-                    Buy Now
-                  </Button>
+                <div className="flex flex-col-reverse sm:flex-row gap-4 mt-8">
+                  {cartItem && (
+                    <Button
+                      size="lg"
+                      className="flex-1 py-4 bg-pink-600 hover:bg-pink-700 text-white"
+                      variant="default"
+                      disabled={!selectedVariant || selectedVariant.stock === 0}
+                      onClick={handleBuyNow}
+                    >
+                      Buy Now
+                    </Button>
+                  )}
 
                   <AddToCart
                     size="lg"
-                    className="flex-1"
+                    className="flex-1 py-4"
                     variant="secondary"
                     disabled={!selectedVariant || selectedVariant.stock === 0}
                     item={{
@@ -259,6 +239,55 @@ export default function ProductDetails({ id }) {
                   </AddToCart>
                 </div>
               )}
+            </div>
+            <div className="md:col-span-2 px-6">
+              <hr />
+
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="description">
+                  <AccordionTrigger className="text-lg font-semibold">
+                    Description
+                  </AccordionTrigger>
+                  <AccordionContent className="text-gray-600 prose max-w-none">
+                    {product.description}
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="specifications">
+                  <AccordionTrigger className="text-lg font-semibold">
+                    Specifications
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+                      <div>
+                        <dt className="text-sm font-medium text-gray-500">
+                          Brand
+                        </dt>
+                        <dd className="mt-1 text-sm text-gray-900">
+                          {product.brand.name}
+                        </dd>
+                      </div>
+                      {product.materials.length > 0 && (
+                        <div>
+                          <dt className="text-sm font-medium text-gray-500">
+                            Materials
+                          </dt>
+                          <dd className="mt-1 text-sm text-gray-900">
+                            {product.materials.join(", ")}
+                          </dd>
+                        </div>
+                      )}
+                      <div>
+                        <dt className="text-sm font-medium text-gray-500">
+                          Category
+                        </dt>
+                        <dd className="mt-1 text-sm text-gray-900">
+                          {product.category.name}
+                        </dd>
+                      </div>
+                    </dl>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
             </div>
           </div>
         </Card>

@@ -21,7 +21,7 @@ export default function AddToCart({
   const itemInCart = cartItems.find(
     (product) =>
       product._id === item._id &&
-      product.selectedVariant._id === item?.selectedVariant?._id
+      product?.selectedVariant?._id === item?.selectedVariant?._id
   );
 
   const handleAddToCart = () => {

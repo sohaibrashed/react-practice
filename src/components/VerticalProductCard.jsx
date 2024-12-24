@@ -1,27 +1,34 @@
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Heart,
-  ShoppingCart,
-  Star,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { Heart, ShoppingCart } from "lucide-react";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@/components/ui/carousel";
 import { formatPrice } from "@/utils/helper";
 import AddToCart from "./AddToCart";
+import Rating from "./Ratings";
+import { useVariantSelector } from "@/hooks/useVariantSelector";
+import { useSelector } from "react-redux";
 
 export default function VerticalProductCard({ product, onClick, handleFav }) {
-  const [currentVariantIndex, setCurrentVariantIndex] = useState(0);
-  const currentVariant = product.variants[currentVariantIndex];
+  const cartItems = useSelector((state) => state.cart.cartItems);
+  const cartItem = cartItems.find((item) => item?._id === product?._id) || null;
+
+  const {
+    selectedColor,
+    selectedSize,
+    selectedVariant,
+    availableColors,
+    availableSizes,
+    handleColorChange,
+    handleSizeChange,
+  } = useVariantSelector(product, cartItem);
+
+  if (!selectedVariant) return null;
 
   return (
     <Card
@@ -35,8 +42,8 @@ export default function VerticalProductCard({ product, onClick, handleFav }) {
         <div className="grid md:grid-cols-2">
           <div className="relative h-[400px] w-full">
             <Carousel className="w-full h-full">
-              <CarouselContent asChild>
-                {currentVariant.images.map((image, index) => (
+              <CarouselContent>
+                {selectedVariant.images.map((image, index) => (
                   <CarouselItem key={index}>
                     <div className="h-[400px] w-full relative">
                       <img
@@ -44,7 +51,7 @@ export default function VerticalProductCard({ product, onClick, handleFav }) {
                         alt={`${product.name} - View ${index + 1}`}
                         onClick={(e) => {
                           e.stopPropagation();
-                          handle(product._id);
+                          handleFav(product._id);
                         }}
                         className="w-full h-full object-cover"
                       />
@@ -52,8 +59,6 @@ export default function VerticalProductCard({ product, onClick, handleFav }) {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              {/* <CarouselPrevious />
-              <CarouselNext /> */}
             </Carousel>
 
             <Button
@@ -80,23 +85,12 @@ export default function VerticalProductCard({ product, onClick, handleFav }) {
                 </Badge>
               </div>
 
-              <div className="flex items-center gap-2">
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-4 h-4 ${
-                        i < product.ratings.average
-                          ? "fill-yellow-400 stroke-yellow-400"
-                          : "fill-gray-200 stroke-gray-200"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <span className="text-sm text-gray-500">
-                  ({product.ratings.count} reviews)
-                </span>
-              </div>
+              <Rating
+                average={product.ratings.average}
+                count={product.ratings.count}
+                starSize="h-3.5 w-3.5"
+                className="mb-4"
+              />
 
               <div className="text-2xl font-bold">
                 {formatPrice(product.price.base, product.price.currency)}
@@ -107,30 +101,42 @@ export default function VerticalProductCard({ product, onClick, handleFav }) {
               <div>
                 <h3 className="text-sm font-medium mb-2">Sizes</h3>
                 <div className="flex flex-wrap gap-2">
-                  {Array.from(new Set(product.variants.map((v) => v.size))).map(
-                    (size) => (
-                      <Badge
-                        key={size}
-                        variant="outline"
-                        className="cursor-pointer hover:bg-gray-100"
-                      >
-                        {size}
-                      </Badge>
-                    )
-                  )}
+                  {availableSizes.map((size) => (
+                    <Badge
+                      key={size}
+                      variant={size === selectedSize ? "solid" : "outline"}
+                      className={`cursor-pointer ${
+                        size === selectedSize
+                          ? "bg-gray-300"
+                          : "hover:bg-gray-100"
+                      }`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSizeChange(size);
+                      }}
+                    >
+                      {size}
+                    </Badge>
+                  ))}
                 </div>
               </div>
 
               <div>
                 <h3 className="text-sm font-medium mb-2">Colors</h3>
                 <div className="flex flex-wrap gap-2">
-                  {Array.from(
-                    new Set(product.variants.map((v) => v.color))
-                  ).map((color) => (
+                  {availableColors.map((color) => (
                     <Badge
                       key={color}
-                      variant="outline"
-                      className="cursor-pointer hover:bg-gray-100 line-clamp-1"
+                      variant={color === selectedColor ? "solid" : "outline"}
+                      className={`cursor-pointer ${
+                        color === selectedColor
+                          ? "bg-gray-300"
+                          : "hover:bg-gray-100"
+                      }`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleColorChange(color);
+                      }}
                     >
                       {color}
                     </Badge>
@@ -151,12 +157,19 @@ export default function VerticalProductCard({ product, onClick, handleFav }) {
                 )}
                 <p className="line-clamp-1">
                   <span className="font-medium">Stock:</span>{" "}
-                  {currentVariant.stock} available
+                  {selectedVariant.stock} available
                 </p>
               </div>
             </div>
 
-            <AddToCart item={product} className="w-full">
+            <AddToCart
+              className="w-full"
+              disabled={!selectedVariant || selectedVariant.stock === 0}
+              item={{
+                ...product,
+                selectedVariant,
+              }}
+            >
               <ShoppingCart className="mr-2 h-4 w-4" />
               Add to Cart
             </AddToCart>
